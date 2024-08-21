@@ -132,7 +132,6 @@ struct EXCLU{
   explicit EXCLU(EXC_SF exc_sf,Kinematics kin);
 };
 struct EXCUT{
-  //equations in 42, the generalized exclusive structure functions of exclusive processes that contribute to the cross section of exclusive radiative tail
   double rex;
   double H1_010;
   double H2_010;
@@ -143,7 +142,6 @@ struct EXCUT{
   explicit EXCUT(EXC_SF exc_sf,Kinematics kin);
 };
 struct EXCLT{
-  //equations in 42, the generalized exclusive structure functions of exclusive processes that contribute to the cross section of exclusive radiative tail
   double rex;
   double H5_010;
   double H7_100;
@@ -151,7 +149,6 @@ struct EXCLT{
   explicit EXCLT(EXC_SF exc_sf,Kinematics kin);
 };
 struct EXCUL{
-  //equations in 42, the generalized exclusive structure functions of exclusive processes that contribute to the cross section of exclusive radiative tail
   double rex;
   double H6_001;
   double H8_001;
@@ -163,5 +160,6 @@ struct EXCLL{
   double H9_001;
   explicit EXCLL(EXC_SF exc_sf, Kinematics kin);
 };
+
 
 #endif
