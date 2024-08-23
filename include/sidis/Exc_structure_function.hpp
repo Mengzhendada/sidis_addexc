@@ -90,13 +90,14 @@ struct EXC_SF_combine{
 struct EXC_SF{
 
   //C.23 exclusive structure functions in orthogonal basis
-  //p is plus, m is minus, o is over, 'ex' in C.23 is ignored in variable name, r1 r2 are same as in exc_sf_fs
+  //p is plus, m is minus, o is over, 'ex' in C.23 is ignored in variable name
   //_000 means no target polarization _123 corresponds to eta1, eta2, eta3
   double r1;
   double r2;
   double r3;
   double r4;
   double r5;
+  double rex;
   double H00pH22_000;
   double H11mH22opt2_000;
   double H22_000;
@@ -119,7 +120,6 @@ struct EXC_SF{
 };
 struct EXCUU{
   //equations in 42, the generalized exclusive structure functions of exclusive processes that contribute to the cross section of exclusive radiative tail
-  double rex;
   double H1_000;
   double H2_000;
   double H3_000;
@@ -127,12 +127,10 @@ struct EXCUU{
   explicit EXCUU(EXC_SF exc_sf,Kinematics kin);
 };
 struct EXCLU{
-  double rex;
   double H5_000;
   explicit EXCLU(EXC_SF exc_sf,Kinematics kin);
 };
 struct EXCUT{
-  double rex;
   double H1_010;
   double H2_010;
   double H3_010;
@@ -142,20 +140,17 @@ struct EXCUT{
   explicit EXCUT(EXC_SF exc_sf,Kinematics kin);
 };
 struct EXCLT{
-  double rex;
   double H5_010;
   double H7_100;
   double H9_100;
   explicit EXCLT(EXC_SF exc_sf,Kinematics kin);
 };
 struct EXCUL{
-  double rex;
   double H6_001;
   double H8_001;
   explicit EXCUL(EXC_SF exc_sf,Kinematics kin);
 };
 struct EXCLL{
-  double rex;
   double H7_001;	
   double H9_001;
   explicit EXCLL(EXC_SF exc_sf, Kinematics kin);
