@@ -526,6 +526,22 @@ struct KinematicsRad {
 	Real shift_vol_phi_h;
 
 	Real shift_C_1;
+	//C.21, C.24
+	Real r1;
+	Real r2;
+	Real r3;
+	Real r4;
+	Real r5;
+	//shifted C.21, C.24
+	Real shift_r1;
+	Real shift_r2;
+	Real shift_r3;
+	Real shift_r4;
+	Real shift_r5;
+
+	Real rex;
+	Real shift_rex;
+
 
 	Real shift_ph_t;
 	Real shift_ph_l;

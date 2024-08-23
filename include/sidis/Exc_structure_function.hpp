@@ -43,7 +43,7 @@ struct EXC_SF_F{
   double f5i;
   double f6r;
   double f6i;
-  EXC_SF_F(Kinematics kin);
+  EXC_SF_F(KinematicsRad kin);
 };
 struct EXC_SF_combine{
   double f11;
@@ -116,7 +116,7 @@ struct EXC_SF{
   double H02i_001;
   double H12r_001;
   double H12i_001;
-  explicit EXC_SF(EXC_SF_combine exc_sf_com, Kinematics kin);
+  explicit EXC_SF(EXC_SF_combine exc_sf_com, KinematicsRad kin);
 };
 struct EXCUU{
   //equations in 42, the generalized exclusive structure functions of exclusive processes that contribute to the cross section of exclusive radiative tail
@@ -124,11 +124,11 @@ struct EXCUU{
   double H2_000;
   double H3_000;
   double H4_000;
-  explicit EXCUU(EXC_SF exc_sf,Kinematics kin);
+  explicit EXCUU(EXC_SF exc_sf,KinematicsRad kin);
 };
 struct EXCLU{
   double H5_000;
-  explicit EXCLU(EXC_SF exc_sf,Kinematics kin);
+  explicit EXCLU(EXC_SF exc_sf,KinematicsRad kin);
 };
 struct EXCUT{
   double H1_010;
@@ -137,23 +137,23 @@ struct EXCUT{
   double H4_010;
   double H6_100;
   double H8_100;
-  explicit EXCUT(EXC_SF exc_sf,Kinematics kin);
+  explicit EXCUT(EXC_SF exc_sf,KinematicsRad kin);
 };
 struct EXCLT{
   double H5_010;
   double H7_100;
   double H9_100;
-  explicit EXCLT(EXC_SF exc_sf,Kinematics kin);
+  explicit EXCLT(EXC_SF exc_sf,KinematicsRad kin);
 };
 struct EXCUL{
   double H6_001;
   double H8_001;
-  explicit EXCUL(EXC_SF exc_sf,Kinematics kin);
+  explicit EXCUL(EXC_SF exc_sf,KinematicsRad kin);
 };
 struct EXCLL{
   double H7_001;	
   double H9_001;
-  explicit EXCLL(EXC_SF exc_sf, Kinematics kin);
+  explicit EXCLL(EXC_SF exc_sf, KinematicsRad kin);
 };
 
 

@@ -133,24 +133,27 @@ int main(int argc, char** argv) {
 	}
 	// Do kinematics calculations.
 	Kinematics kin(ps, S, ph_space);
+	KinematicsRad kinrad(kin,0.1,1.0,1.0);
         std::cout<<"check kin W "<<std::sqrt(kin.W_sq)<<" Q2 "<<kin.Q_sq<<" t "<<kin.t<<std::endl;
         double thetacm=0;
         thetacm=Get_thetacm(std::sqrt(kin.W_sq),kin.Q_sq,kin.t);
         std::cout<<"thetacm "<<thetacm<<std::endl;
-        EXC_SF_F exc_sf_f(kin);
+        EXC_SF_F exc_sf_f(kinrad);
         std::cout<<" check exc f1r "<< exc_sf_f.f1r<<std::endl;
         std::cout<<" check exc f3i "<< exc_sf_f.f3i<<std::endl;
         std::cout<<" check exc f6i "<< exc_sf_f.f6i<<" and f6r "<<exc_sf_f.f6r<<std::endl;
-        EXC_SF_combine exc_sf_combine(kin);
+        EXC_SF_combine exc_sf_combine(kinrad);
         std::cout<<" check exc f11 "<< exc_sf_combine.f11<<" and f12r "<<exc_sf_combine.f12r<<std::endl;
         std::vector<double> A_exc;
         A_exc=Get_exc_sf(std::sqrt(kin.W_sq),kin.Q_sq,kin.t);
         std::cout<<"check A_exc "<<A_exc[0]<<" 1 "<<A_exc[1]<<std::endl;
         double H00pH22_000=0;
-        EXC_SF exc_sf(exc_sf_combine,kin);
+        EXC_SF exc_sf(exc_sf_combine,kinrad);
         H00pH22_000= exc_sf.H00pH22_000;
         std::cout<<" check H00pH22_000 "<<H00pH22_000<<std::endl;
-        EXCUU excuu(exc_sf,kin);
+	std::cout<<"check tau min "<<kinrad.tau_min<<std::endl;
+	std::cout<<"check tau max "<<kinrad.tau_max<<std::endl;
+        EXCUU excuu(exc_sf,kinrad);
         double H1_000;
         H1_000=excuu.H1_000;
         std::cout<<" check generalized exc sf uu "<<H1_000<<std::endl;
