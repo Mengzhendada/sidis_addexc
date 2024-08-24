@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
 	}
 	// Do kinematics calculations.
 	Kinematics kin(ps, S, ph_space);
-	KinematicsRad kinrad(kin,0.1,1.0,1.0);
+	KinematicsRad kinrad(kin,1.1,1.0,1.0);
         std::cout<<"check kin W "<<std::sqrt(kin.W_sq)<<" Q2 "<<kin.Q_sq<<" t "<<kin.t<<std::endl;
         double thetacm=0;
         thetacm=Get_thetacm(std::sqrt(kin.W_sq),kin.Q_sq,kin.t);
@@ -151,12 +151,14 @@ int main(int argc, char** argv) {
         EXC_SF exc_sf(exc_sf_combine,kinrad);
         H00pH22_000= exc_sf.H00pH22_000;
         std::cout<<" check H00pH22_000 "<<H00pH22_000<<std::endl;
+        std::cout<<" check H11mH22/pt2 "<<exc_sf.H11mH22opt2_000<<std::endl;
+        EXCUU excuu(exc_sf,kinrad);
+	std::cout<<" check H1_000 "<<excuu.H1_000<<std::endl;
+	std::cout<<" check H2_000 "<<excuu.H2_000<<std::endl;
+	std::cout<<" check H3_000 "<<excuu.H3_000<<std::endl;
+	std::cout<<" check H4_000 "<<excuu.H4_000<<std::endl;
 	std::cout<<"check tau min "<<kinrad.tau_min<<std::endl;
 	std::cout<<"check tau max "<<kinrad.tau_max<<std::endl;
-        EXCUU excuu(exc_sf,kinrad);
-        double H1_000;
-        H1_000=excuu.H1_000;
-        std::cout<<" check generalized exc sf uu "<<H1_000<<std::endl;
 
         // Get the target polarization in the hadron frame.
 	Vec3 eta = frame::hadron_from_target(kin) * target_pol;
@@ -171,13 +173,13 @@ int main(int argc, char** argv) {
 		EstErr nrad = xs::nrad_integ(kin, *sf, beam_pol, eta, k0_cut, params);
 		EstErr rad = xs::rad_integ(kin, *sf, beam_pol, eta, k0_cut, params);
                 std::cout << argv[1] << " " <<argv[2]<<" "<<argv[3]<<" "<<argv[4]<<" "<<argv[5]<<" "<<argv[6]<<" "<<argv[7]<<" "<<argv[8]<<" "<<argv[9]<<" "<<argv[10]<<" "<<argv[11];
-                std::cout << " " << born ;
-		std::cout << " " << amm ;
-		std::cout << " " << nrad_ir ;
-		std::cout << " " << rad_f.val << " " << rad_f.err ;
-		std::cout << " " << nrad.val << " " << nrad.err ;
-		std::cout << " " << rad.val << " " << rad.err ;
-		std::cout << " " << nrad.val + rad.val << " " << nrad.err + rad.err<<std::endl ;
+                std::cout << " born " << born ;
+		std::cout << " amm " << amm ;
+		std::cout << " nrad ir " << nrad_ir ;
+		std::cout << " rad f " << rad_f.val << " err " << rad_f.err ;
+		std::cout << " nrad " << nrad.val << " err " << nrad.err ;
+		std::cout << " rad " << rad.val << " err " << rad.err ;
+		std::cout << " add " << nrad.val + rad.val << " err " << nrad.err + rad.err<<std::endl ;
 	} else {
 		// Do radiative kinematics checks.
 		if (!cut::tau_bound(kin).contains(tau)) {
