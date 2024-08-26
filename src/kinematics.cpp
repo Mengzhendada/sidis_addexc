@@ -288,6 +288,9 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 			+ 2.*V_1*sq(M)*Q_sq));
 
 	shift_C_1 = (4.*M*shift_ph_l*(shift_Q_sq + 2.*shift_x*sq(M)))/sq(sq(shift_Q_sq));
+	
+	//Exclusive related quantities
+	m_n= 0.9395612928;
 	r1=sq(sqrt(W_sq)+M)+Q_sq;
 	r2=sq(sqrt(W_sq)-M)+Q_sq;
 	r3=sq(sqrt(W_sq)+m_n)-sq(mh);
@@ -299,10 +302,10 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 	shift_r3=sq(sqrt(shift_W_sq)+m_n)-sq(mh);
 	shift_r4=sq(sqrt(shift_W_sq)-m_n)-sq(mh);
 	shift_r5=shift_W_sq*(sq(M)+sq(mh)+sq(m_n)-shift_Q_sq-2*shift_t)+(sq(M)+shift_Q_sq)*(sq(mh)-sq(m_n))-sq(shift_W_sq);
-	shift_rex=2*(kin.shift_Q_sq*(sq(kin.M)-sq(m_n)+kin.shift_S_x+kin.shift_t)+kin.shift_S_x*kin.V_m)/kin.shift_lambda_Y_sqrt;
+	shift_rex=2*(shift_Q_sq*(sq(kin.M)-sq(m_n)+shift_S_x+shift_t)+shift_S_x*V_m)/shift_lambda_Y_sqrt;
 
-        Rex= (sq(M)+t+(1-z)*S_x-sq(m_n))/(1+tau-mu)
-        shift_Rex= (sq(M)+shift_t+(1-shift_z)*shift_S_x-sq(m_n))/(1+tau-mu)
+        Rex= (sq(M)+t+(1-z)*S_x-sq(m_n))/(1+tau-mu);
+        shift_Rex= (sq(M)+shift_t+(1-shift_z)*shift_S_x-sq(m_n))/(1+tau-mu);
 
 
 	// TODO: Fill in equation number from derivations.

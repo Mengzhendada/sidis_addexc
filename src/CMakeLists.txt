@@ -5,6 +5,7 @@ set(
 	"sidis/bound.hpp"
 	"sidis/constant.hpp"
 	"sidis/cross_section.hpp"
+	"sidis/Exc_structure_function.hpp"
 	"sidis/cut.hpp"
 	"sidis/frame.hpp"
 	"sidis/hadronic_coeff.hpp"
@@ -52,6 +53,7 @@ add_library(
 	asymmetry.cpp
 	bound.cpp
 	cross_section.cpp
+	Exc_structure_function.cpp
 	cut.cpp
 	exception.cpp
 	frame.cpp

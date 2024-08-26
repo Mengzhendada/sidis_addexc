@@ -3,6 +3,7 @@
 #include <cmath>
 #include <limits>
 #include <string>
+#include <iostream>
 
 #include "sidis/bound.hpp"
 #include "sidis/constant.hpp"
@@ -13,6 +14,7 @@
 #include "sidis/leptonic_coeff.hpp"
 #include "sidis/phenom.hpp"
 #include "sidis/structure_function.hpp"
+#include "sidis/Exc_structure_function.hpp"
 #include "sidis/vector.hpp"
 #include "sidis/extra/integrate.hpp"
 #include "sidis/extra/math.hpp"
@@ -20,6 +22,7 @@
 using namespace sidis;
 using namespace sidis::cut;
 using namespace sidis::had;
+using namespace sidis::exc;
 using namespace sidis::kin;
 using namespace sidis::lep;
 using namespace sidis::math;
@@ -813,4 +816,112 @@ Vec3 xs::rad_f_base_lp(Rad const& b, LepRadBaseLU const& lep_lu, LepRadBaseLP co
 			(lep_lp.theta_074 + lep_lp.theta_174)*had.H_7
 			+ (lep_lp.theta_094 + lep_lp.theta_194)*had.H_9));
 }
+
+//EstErr xs::exc_integ(Kinematics const& kin, SfSet const& sf, Real lambda_e, Vec3 eta, Real k_0_bar, IntegParams params) {
+//	return exc_integ(kin, Phenom(kin), sf, lambda_e, eta);
+//}
+
+//sidis::Real sidis::xs::exc_integ(Kinematics const& kin, Phenom const& phenom, Real lambda_e, Vec3 eta) {
+//	
+//	KinematicsRad kin_rad(kin,1.1,1.0,1.0);
+//	double taumin = kin_rad.tau_min;
+//	double taumax = kin_rad.tau_max;
+//	EXC b(kin_rad);
+//	std::cout<<"check exc_integ"<<b.Rex<<std::endl;
+//	//Real xs =  SIDIS_MACRO_XS_FROM_BASE_P(exc, LepRad, HadRad, kin_rad, sf, b, lambda_e, eta);
+//	return 1.0;
+//}
+
+// Exclusive radiative base functions.
+EXC::EXC(KinematicsRad const& kin) {
+	// Equation [36].
+	coeff = -(std::pow(ALPHA, 3)*kin.S*sq(kin.S_x))
+		/(512.*std::pow(PI,5)*kin.M*kin.ph_l*kin.lambda_S*kin.lambda_Y_sqrt);
+	Rex = kin.Rex;
+}
+
+Real xs::exc_base_uu(EXC const& b, LepRadBaseUU const& lep, EXCUU const& exc) {
+	return b.coeff*(
+		1./b.Rex*(
+			lep.theta_011*exc.H1_000
+			+ lep.theta_021*exc.H2_000
+			+ lep.theta_031*exc.H3_000
+			+ lep.theta_041*exc.H4_000)
+		+ (
+			lep.theta_012*exc.H1_000
+			+ lep.theta_022*exc.H2_000
+			+ lep.theta_032*exc.H3_000
+			+ lep.theta_042*exc.H4_000)
+		+ b.Rex*(
+			lep.theta_013*exc.H1_000
+			+ lep.theta_023*exc.H2_000
+			+ lep.theta_033*exc.H3_000
+			+ lep.theta_043*exc.H4_000));
+}
+//For Exclusive case, I don't think that we have to combine UL and UT, but it's combined in SIDIS case, so here it is
+Vec3 xs::exc_base_up(EXC const& b, LepRadBaseUU const& lep_uu, LepRadBaseUP const & lep_up, EXCUT const& excut, EXCUL const& excul){
+        //in SIDIS case, had.H1 is Vec3. Here in EXC hadron structure function, I wrote everything in double, so I have to build Vec3 here
+	return b.coeff*(
+		1/b.Rex*(
+			lep_uu.theta_011*Vec3(0.,excut.H1_010,0.)
+			+lep_uu.theta_021*Vec3(0.,excut.H2_010,0.)
+			+lep_uu.theta_031*Vec3(0.,excut.H3_010,0.)
+			+lep_uu.theta_041*Vec3(0.,excut.H4_010,0.)
+			+lep_up.theta_061*Vec3(excut.H6_100,0.,excul.H6_001)
+			+lep_up.theta_081*Vec3(excut.H8_100,0.,excul.H8_001)
+			)
+		+(
+			lep_uu.theta_012*Vec3(0.,excut.H1_010,0.)
+			+lep_uu.theta_022*Vec3(0.,excut.H2_010,0.)
+			+lep_uu.theta_032*Vec3(0.,excut.H3_010,0.)
+			+lep_uu.theta_042*Vec3(0.,excut.H4_010,0.)
+			+lep_up.theta_062*Vec3(excut.H6_100,0.,excul.H6_001)
+			+lep_up.theta_082*Vec3(excut.H8_100,0.,excul.H8_001)
+			)
+		+ b.Rex*(
+			lep_uu.theta_013*Vec3(0.,excut.H1_010,0.)
+			+lep_uu.theta_023*Vec3(0.,excut.H2_010,0.)
+			+lep_uu.theta_033*Vec3(0.,excut.H3_010,0.)
+			+lep_uu.theta_043*Vec3(0.,excut.H4_010,0.)
+			+lep_up.theta_063*Vec3(excut.H6_100,0.,excul.H6_001)
+			+lep_up.theta_083*Vec3(excut.H8_100,0.,excul.H8_001)
+			)
+		+ b.Rex*b.Rex*(
+                        lep_up.theta_064*Vec3(excut.H6_100,0.,excul.H6_001)
+                        +lep_up.theta_084*Vec3(excut.H8_100,0.,excul.H8_001)
+			)
+		);
+}
+Real xs::exc_base_lu(EXC const& b, LepRadBaseLU const& lep, EXCLU const& exc) {
+	return b.coeff*(
+		1./b.Rex*(lep.theta_051 + lep.theta_151)*exc.H5_000
+		+ (lep.theta_052 + lep.theta_152)*exc.H5_000
+		+ b.Rex*(lep.theta_053 + lep.theta_153)*exc.H5_000);
+}
+Vec3 xs::exc_base_lp(EXC const& b, LepRadBaseLU const& lep_lu, LepRadBaseLP const& lep_lp, EXCLT const& exclt, EXCLL const& excll){
+	return b.coeff*(
+		1./b.Rex*(
+			(lep_lu.theta_051 + lep_lu.theta_151)*Vec3(0., exclt.H5_010, 0.)
+			+ (lep_lp.theta_071 + lep_lp.theta_171)*Vec3(exclt.H7_100,0.,excll.H7_001)
+			+ (lep_lp.theta_091 + lep_lp.theta_191)*Vec3(exclt.H9_100,0.,excll.H9_001)
+			)
+		+ (
+		 	(lep_lu.theta_052 + lep_lu.theta_152)*Vec3(0.,exclt.H5_010,0.)
+			+ (lep_lp.theta_072 + lep_lp.theta_172)*Vec3(exclt.H7_100,0.,excll.H7_001)
+			+ (lep_lp.theta_092 + lep_lp.theta_192)*Vec3(exclt.H9_100,0.,excll.H9_001)
+			)
+		+ b.Rex*(
+		 	(lep_lu.theta_053 + lep_lu.theta_153)*Vec3(0.,exclt.H5_010,0.)
+			+ (lep_lp.theta_073 + lep_lp.theta_173)*Vec3(exclt.H7_100,0.,excll.H7_001)
+			+ (lep_lp.theta_093 + lep_lp.theta_193)*Vec3(exclt.H9_100,0.,excll.H9_001)
+			)
+		+ b.Rex*b.Rex*(
+			(lep_lp.theta_074 + lep_lp.theta_174)*Vec3(exclt.H7_100,0.,excll.H7_001)
+			+ (lep_lp.theta_094 + lep_lp.theta_194)*Vec3(exclt.H9_100,0.,excll.H9_001)
+			)
+		);
+		
+
+}
+
 

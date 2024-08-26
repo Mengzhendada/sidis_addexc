@@ -10,12 +10,10 @@
 using namespace std;
 using namespace sidis::math;
 
-
 ///Add updates from exclusive contribution arXiv:2310.17961v1 (2023)
 
 ///Fine structure constant. Not sure about the Q2 dependence for exclusive structure function
-double ALPHA = 7.2973525664e-3L;
-
+namespace sidis{namespace exc{ 
 double Get_thetacm(double W, double Q2, double t){
   //The exclusive structure function grid depends on thetacm
   double m_pi = 0.1349770;//define values here is too dirty
@@ -294,4 +292,4 @@ EXCLL::EXCLL(EXC_SF exc_sf, KinematicsRad kin){
   H9_001=2/sq(kin.shift_ph_t)/kin.shift_lambda_Y_sqrt*exc_sf.H12i_001;
 
 }
-
+}}//namespace

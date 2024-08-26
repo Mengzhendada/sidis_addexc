@@ -7,9 +7,9 @@
 #include "sidis/kinematics.hpp"
 using namespace sidis::kin;
 using namespace sidis;
-
+namespace sidis{namespace exc{
 const double m_n = 0.9395612928;
-
+const double ALPHA = 7.2973525664e-3L;
 double Get_thetacm(double W, double Q2, double t);
 double Get_Interpolated(double y0,double y1,double x0,double x1,double x);
 std::vector<double> Get_exc_sf(double W, double Q2, double t);
@@ -156,5 +156,5 @@ struct EXCLL{
   explicit EXCLL(EXC_SF exc_sf, KinematicsRad kin);
 };
 
-
+}}//namespace 
 #endif

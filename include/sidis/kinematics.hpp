@@ -527,6 +527,7 @@ struct KinematicsRad {
 
 	Real shift_C_1;
 	//C.21, C.24
+        Real m_n;	
 	Real r1;
 	Real r2;
 	Real r3;

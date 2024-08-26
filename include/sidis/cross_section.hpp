@@ -56,6 +56,14 @@ namespace had {
 	struct HadRadFBaseLU;
 	struct HadRadFBaseLP;
 }
+namespace exc {
+	struct EXCUU;
+	struct EXCUT;
+	struct EXCUL;
+	struct EXCLU;
+	struct EXCLT;
+	struct EXCLL;
+}
 namespace sf {
 	class SfSet;
 }
@@ -295,6 +303,27 @@ math::Vec3 rad_f_base_up(Rad const& b, lep::LepRadBaseUU const& lep_uu, lep::Lep
 Real rad_f_base_lu(Rad const& b, lep::LepRadBaseLU const& lep, had::HadRadFBaseLU const& had);
 math::Vec3 rad_f_base_lp(Rad const& b, lep::LepRadBaseLU const& lep_lu, lep::LepRadBaseLP const& lep_lp, had::HadRadFBaseLP const& had);
 /// \}
+
+//exc cross section
+//Real exc(kin::KinematicsRad const& kin, sf::SfSet const& sf, Real lambda_e, math::Vec3 eta);
+//copy
+//Real axc(kin::KinematicsRad const& kin, ph::Phenom const& phenom, sf::SfSet const& sf, Real lambda_e, math::Vec3 eta);
+//exc cross section integrate, 
+//math::EstErr exc_integ(kin::Kinematics const& kin, sf::SfSet const& sf, Real lambda_e, math::Vec3 eta, Real k_0_bar=INF, math::IntegParams params=DEFAULT_INTEG_PARAMS);
+/// \copydoc rad_integ()
+//math::EstErr exc_integ(kin::Kinematics const& kin, ph::Phenom const& phenom, sf::SfSet const& sf, Real lambda_e, math::Vec3 eta, Real k_0_bar=INF, math::IntegParams params=DEFAULT_INTEG_PARAMS);
+//Real exc_integ(kin::Kinematics const& kin, Real lambda_e, math::Vec3 eta);
+
+struct EXC {
+	Real coeff;
+	Real Rex;
+	EXC(kin::KinematicsRad const& kin);
+};
+
+Real exc_base_uu(EXC const& b, lep::LepRadBaseUU const& lep, exc::EXCUU const& exc);
+math::Vec3 exc_base_up(EXC const& b, lep::LepRadBaseUU const& lep_uu, lep::LepRadBaseUP const& lep_up, exc::EXCUT const& excut, exc::EXCUL const& excul);
+Real exc_base_lu(EXC const& b, lep::LepRadBaseLU const& lep, exc::EXCLU const& exc);
+math::Vec3 exc_base_lp(EXC const& b, lep::LepRadBaseLU const& lep_lu, lep::LepRadBaseLP const& lep_lp, exc::EXCLT const& exclt,exc::EXCLL const& excll);
 
 }
 }

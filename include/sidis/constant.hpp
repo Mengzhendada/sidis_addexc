@@ -19,6 +19,9 @@ Real const SQRT_2 = 1.4142135623730950488016887242096980785696718753769480731766
 /// Positive infinity.
 Real const INF = 1. / 0.;
 
+///Check here! Fins structure value, need to be updated
+const double ALPHA = 7.2973525664e-3L;
+
 /// \name Particle masses
 /// \sa ParticleGroup
 /// \{
