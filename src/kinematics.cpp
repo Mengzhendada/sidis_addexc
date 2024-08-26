@@ -301,6 +301,10 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 	shift_r5=shift_W_sq*(sq(M)+sq(mh)+sq(m_n)-shift_Q_sq-2*shift_t)+(sq(M)+shift_Q_sq)*(sq(mh)-sq(m_n))-sq(shift_W_sq);
 	shift_rex=2*(kin.shift_Q_sq*(sq(kin.M)-sq(m_n)+kin.shift_S_x+kin.shift_t)+kin.shift_S_x*kin.V_m)/kin.shift_lambda_Y_sqrt;
 
+        Rex= (sq(M)+t+(1-z)*S_x-sq(m_n))/(1+tau-mu)
+        shift_Rex= (sq(M)+shift_t+(1-shift_z)*shift_S_x-sq(m_n))/(1+tau-mu)
+
+
 	// TODO: Fill in equation number from derivations.
 	shift_sin_phi_h = -2.*shift_vol_phi_h/(shift_ph_t*shift_q_t*lambda_S_sqrt);
 	shift_cos_phi_h = 1./(4.*sq(M)*shift_ph_t*shift_q_t*shift_lambda_Y_sqrt*lambda_S_sqrt)*(

@@ -1,4 +1,4 @@
-#include "sidis/cross_section.hpp"
+#include "sidis/exc_cross_section.hpp"
 
 #include <cmath>
 #include <limits>
@@ -26,6 +26,9 @@ using namespace sidis::math;
 using namespace sidis::ph;
 using namespace sidis::sf;
 using namespace sidis::xs;
+
+///Fine structure constant. Not sure about the Q2 dependence for exclusive structure function
+double ALPHA = 7.2973525664e-3L;
 
 // Macro that computes the cross-section from the base cross-sections in an
 // optimized way. For example, if the polarization is zero, then the
@@ -89,44 +92,44 @@ Real xs::exc(KinematicsRad const& kin, Phenom const& phenom, SfSet const& sf, Re
 
 
 
-//EstErr xs::exc_integ(Kinematics const& kin, Phenom const& phenom, SfSet const& sf, Real lambda_e, Vec3 eta, Real k_0_bar, IntegParams params) {
-//	CutRad cut;
-//	cut.k_0_bar = Bound(k_0_bar, INF);
-//	EstErr xs_integ = integrate<3>(
-//		[&](std::array<Real, 3> x) {
-//			KinematicsRad kin_exc;
-//			Real jac;
-//			if (!take(cut, kin, x.data(), &kin_exc, &jac)) {
-//				return 0.;
-//			}
-//			Rad b(kin_exc, phenom);
-//			Real xs = jac * SIDIS_MACRO_XS_FROM_BASE_P(exc, LepRad, HadRad, kin_exc, sf, b, lambda_e, eta);
-//			if (std::isnan(xs)) {
-//				return 0.;
-//			} else {
-//				return xs;
-//			}
-//		},
-//		std::array<Real, 3>{ 0., 0., 0. },
-//		std::array<Real, 3>{ 1., 1., 1. },
-//		params);
-//	return xs_integ;
-//}
-//
+EstErr xs::exc_integ(Kinematics const& kin, Phenom const& phenom, SfSet const& sf, Real lambda_e, Vec3 eta, Real k_0_bar, IntegParams params) {
+	CutRad cut;
+	cut.k_0_bar = Bound(k_0_bar, INF);
+	EstErr xs_integ = integrate<3>(
+		[&](std::array<Real, 3> x) {
+			KinematicsRad kin_exc;
+			Real jac;
+			if (!take(cut, kin, x.data(), &kin_exc, &jac)) {
+				return 0.;
+			}
+			Rad b(kin_exc, phenom);
+			Real xs = jac * SIDIS_MACRO_XS_FROM_BASE_P(exc, LepRad, HadRad, kin_exc, sf, b, lambda_e, eta);
+			if (std::isnan(xs)) {
+				return 0.;
+			} else {
+				return xs;
+			}
+		},
+		std::array<Real, 3>{ 0., 0., 0. },
+		std::array<Real, 3>{ 1., 1., 1. },
+		params);
+	return xs_integ;
+}
+
 Real xs::exc(KinematicsRad const& kin, SfSet const& sf, Real lambda_e, Vec3 eta) {
 	return exc(kin, Phenom(kin.project()), sf, lambda_e, eta);
 }
-//EstErr xs::exc_integ(Kinematics const& kin, SfSet const& sf, Real lambda_e, Vec3 eta, Real k_0_bar, IntegParams params) {
-//	return exc_integ(kin, Phenom(kin), sf, lambda_e, eta, k_0_bar, params);
-//}
+EstErr xs::exc_integ(Kinematics const& kin, SfSet const& sf, Real lambda_e, Vec3 eta, Real k_0_bar, IntegParams params) {
+	return exc_integ(kin, Phenom(kin), sf, lambda_e, eta, k_0_bar, params);
+}
 
 
 
 
 // Exclusive radiative base functions.
-EXC::EXC(KinematicsRad const& kin, Phenom const& phenom) {
+EXC::EXC(KinematicsRad const& kin) {
 	// Equation [36].
-	coeff = -(std::pow(phenom.alpha_qed, 3)*kin.S*sq(kin.S_x))
+	coeff = -(std::pow(ALPHA, 3)*kin.S*sq(kin.S_x))
 		/(512.*std::pow(PI,5)*kin.M*kin.ph_l*kin.lambda_S*kin.lambda_Y_sqrt);
 	Rex = kin.Rex;//Need to define this Rex
 }

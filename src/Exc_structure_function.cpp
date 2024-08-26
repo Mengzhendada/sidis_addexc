@@ -1,7 +1,7 @@
 #include "sidis/Exc_structure_function.hpp"
 #include "sidis/constant.hpp"
 #include "sidis/extra/math.hpp"
-//#include "sidis/phinom.hpp"
+//#include "sidis/phenom.hpp"
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -9,6 +9,7 @@
 
 using namespace std;
 using namespace sidis::math;
+
 
 ///Add updates from exclusive contribution arXiv:2310.17961v1 (2023)
 
@@ -293,3 +294,4 @@ EXCLL::EXCLL(EXC_SF exc_sf, KinematicsRad kin){
   H9_001=2/sq(kin.shift_ph_t)/kin.shift_lambda_Y_sqrt*exc_sf.H12i_001;
 
 }
+
