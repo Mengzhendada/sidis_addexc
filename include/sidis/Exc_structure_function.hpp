@@ -124,11 +124,11 @@ struct EXCUU{
   double H2_000;
   double H3_000;
   double H4_000;
-  explicit EXCUU(EXC_SF exc_sf,KinematicsRad kin);
+  explicit EXCUU(KinematicsRad kin);
 };
 struct EXCLU{
   double H5_000;
-  explicit EXCLU(EXC_SF exc_sf,KinematicsRad kin);
+  explicit EXCLU(KinematicsRad kin);
 };
 struct EXCUT{
   double H1_010;
@@ -137,23 +137,23 @@ struct EXCUT{
   double H4_010;
   double H6_100;
   double H8_100;
-  explicit EXCUT(EXC_SF exc_sf,KinematicsRad kin);
+  explicit EXCUT(KinematicsRad kin);
 };
 struct EXCLT{
   double H5_010;
   double H7_100;
   double H9_100;
-  explicit EXCLT(EXC_SF exc_sf,KinematicsRad kin);
+  explicit EXCLT(KinematicsRad kin);
 };
 struct EXCUL{
   double H6_001;
   double H8_001;
-  explicit EXCUL(EXC_SF exc_sf,KinematicsRad kin);
+  explicit EXCUL(KinematicsRad kin);
 };
 struct EXCLL{
   double H7_001;	
   double H9_001;
-  explicit EXCLL(EXC_SF exc_sf, KinematicsRad kin);
+  explicit EXCLL(KinematicsRad kin);
 };
 
 }}//namespace 

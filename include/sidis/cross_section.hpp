@@ -312,7 +312,8 @@ math::Vec3 rad_f_base_lp(Rad const& b, lep::LepRadBaseLU const& lep_lu, lep::Lep
 //math::EstErr exc_integ(kin::Kinematics const& kin, sf::SfSet const& sf, Real lambda_e, math::Vec3 eta, Real k_0_bar=INF, math::IntegParams params=DEFAULT_INTEG_PARAMS);
 /// \copydoc rad_integ()
 //math::EstErr exc_integ(kin::Kinematics const& kin, ph::Phenom const& phenom, sf::SfSet const& sf, Real lambda_e, math::Vec3 eta, Real k_0_bar=INF, math::IntegParams params=DEFAULT_INTEG_PARAMS);
-//Real exc_integ(kin::Kinematics const& kin, Real lambda_e, math::Vec3 eta);
+Real EXC_XS_FROM_BASE_P(kin::KinematicsRad kin, Real lambda_e, math::Vec3& eta);
+Real exc_integ(kin::Kinematics const& kin, Real lambda_e, math::Vec3 eta);
 
 struct EXC {
 	Real coeff;

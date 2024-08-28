@@ -820,17 +820,78 @@ Vec3 xs::rad_f_base_lp(Rad const& b, LepRadBaseLU const& lep_lu, LepRadBaseLP co
 //EstErr xs::exc_integ(Kinematics const& kin, SfSet const& sf, Real lambda_e, Vec3 eta, Real k_0_bar, IntegParams params) {
 //	return exc_integ(kin, Phenom(kin), sf, lambda_e, eta);
 //}
+Real xs::EXC_XS_FROM_BASE_P(KinematicsRad kin,Real lambda_e,Vec3& eta) 
+{
+    EXC b(kin);
+    // Create a mask describing the polarization state.
+    unsigned pol_mask = (((lambda_e) != 0.) << 1) 
+                      | (((eta.x != 0. || eta.y != 0. || eta.z != 0.) << 0));
 
-//sidis::Real sidis::xs::exc_integ(Kinematics const& kin, Phenom const& phenom, Real lambda_e, Vec3 eta) {
-//	
-//	KinematicsRad kin_rad(kin,1.1,1.0,1.0);
-//	double taumin = kin_rad.tau_min;
-//	double taumax = kin_rad.tau_max;
-//	EXC b(kin_rad);
-//	std::cout<<"check exc_integ"<<b.Rex<<std::endl;
-//	//Real xs =  SIDIS_MACRO_XS_FROM_BASE_P(exc, LepRad, HadRad, kin_rad, sf, b, lambda_e, eta);
-//	return 1.0;
-//}
+    Real uu = 0.;
+    Vec3 up = VEC3_ZERO;
+    Real lu = 0.;
+    Vec3 lp = VEC3_ZERO;
+
+    switch (pol_mask) {
+        case 0:  // 00
+            {
+                LepRadUU leprad(kin);
+                EXCUU excuu(kin);
+                uu = exc_base_uu(b, leprad.uu, excuu);
+            }
+            break;
+        case 1:  // 01
+            {
+                LepRadUP leprad(kin);
+                EXCUU excuu(kin);
+                EXCUT excut(kin);
+		EXCUL excul(kin);
+                uu = exc_base_uu(b, leprad.uu, excuu);
+                up = exc_base_up(b, leprad.uu, leprad.up, excut,excul);
+            }
+            break;
+        case 2:  // 10
+            {
+                LepRadLU leprad(kin);
+                EXCUU excuu(kin);
+                EXCLU exclu(kin);
+                uu = exc_base_uu(b, leprad.uu, excuu);
+                lu = exc_base_lu(b, leprad.lu, exclu);
+            }
+            break;
+        case 3:  // 11
+            {
+                LepRadLP leprad(kin);
+                EXCUU excuu(kin);
+                EXCUT excut(kin);
+                EXCUL excul(kin);
+                EXCLU exclu(kin);
+                EXCLT exclt(kin);
+                EXCLL excll(kin);
+                uu = exc_base_uu(b, leprad.uu, excuu);
+                up = exc_base_up(b, leprad.uu, leprad.up, excut,excul);
+                lu = exc_base_lu(b, leprad.lu, exclu);
+                lp = exc_base_lp(b, leprad.lu, leprad.lp, exclt,excll);
+            }
+            break;
+    }
+
+    return uu + dot(up, eta) + (lambda_e)*(lu + dot(lp, eta));
+}
+
+Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
+	
+	KinematicsRad kin_rad(kin,1.1,1.0,1.0);
+	double taumin = kin_rad.tau_min;
+	double taumax = kin_rad.tau_max;
+	EXC b(kin_rad);
+	//std::cout<<"check exc_integ function, Rex "<<b.Rex<<std::endl;
+
+	Real xs =  EXC_XS_FROM_BASE_P(kin_rad, lambda_e, eta);
+	//std::cout<<"check exc_integ function, the macro "<<xs<<std::endl;
+	
+	return 1.0;
+}
 
 // Exclusive radiative base functions.
 EXC::EXC(KinematicsRad const& kin) {
