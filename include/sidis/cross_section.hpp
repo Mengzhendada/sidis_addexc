@@ -313,6 +313,7 @@ math::Vec3 rad_f_base_lp(Rad const& b, lep::LepRadBaseLU const& lep_lu, lep::Lep
 /// \copydoc rad_integ()
 //math::EstErr exc_integ(kin::Kinematics const& kin, ph::Phenom const& phenom, sf::SfSet const& sf, Real lambda_e, math::Vec3 eta, Real k_0_bar=INF, math::IntegParams params=DEFAULT_INTEG_PARAMS);
 Real EXC_XS_FROM_BASE_P(kin::KinematicsRad kin, Real lambda_e, math::Vec3& eta);
+//Real integrate2D(EXC_XS_FROM_BASE_P func, double x1min, double x1max, double x2min, double x2max, int nx1, int nx2);
 Real exc_integ(kin::Kinematics const& kin, Real lambda_e, math::Vec3 eta);
 
 struct EXC {

@@ -149,11 +149,11 @@ int main(int argc, char** argv) {
         A_exc=Get_exc_sf(std::sqrt(kin.W_sq),kin.Q_sq,kin.t);
         std::cout<<"check A_exc "<<A_exc[0]<<" 1 "<<A_exc[1]<<std::endl;
         double H00pH22_000=0;
-        EXC_SF exc_sf(exc_sf_combine,kinrad);
+        EXC_SF exc_sf(kinrad);
         H00pH22_000= exc_sf.H00pH22_000;
         std::cout<<" check H00pH22_000 "<<H00pH22_000<<std::endl;
         std::cout<<" check H11mH22/pt2 "<<exc_sf.H11mH22opt2_000<<std::endl;
-        EXCUU excuu(exc_sf,kinrad);
+        EXCUU excuu(kinrad);
 	std::cout<<" check H1_000 "<<excuu.H1_000<<std::endl;
 	std::cout<<" check H2_000 "<<excuu.H2_000<<std::endl;
 	std::cout<<" check H3_000 "<<excuu.H3_000<<std::endl;

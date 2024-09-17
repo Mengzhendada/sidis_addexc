@@ -526,25 +526,6 @@ struct KinematicsRad {
 	Real shift_vol_phi_h;
 
 	Real shift_C_1;
-	//C.21, C.24
-        Real m_n;	
-	Real r1;
-	Real r2;
-	Real r3;
-	Real r4;
-	Real r5;
-	//shifted C.21, C.24
-	Real shift_r1;
-	Real shift_r2;
-	Real shift_r3;
-	Real shift_r4;
-	Real shift_r5;
-
-	Real rex;//[43]
-	Real shift_rex;
-
-        Real Rex;//[38]
-        Real shift_Rex;//[38]
 
 	Real shift_ph_t;
 	Real shift_ph_l;
@@ -552,6 +533,42 @@ struct KinematicsRad {
 	Real shift_q_t;
 	Real shift_q_l;
 	Real shift_k1_t;
+	
+	//2023 paper, exclusive contribution
+	//I realized that I need to update many variables, it might be eazier to have a new struct
+	//C.21, C.24
+        Real m_n;	
+	Real r1;
+	Real r2;
+	Real r3;
+	Real r4;
+	Real r5;
+	
+        Real Rex;//[38]
+        //Real shift_Rex;//[38]
+	Real shiftexc_W_sq;
+	Real shiftexc_W;
+	Real shiftexc_t;
+	Real shiftexc_Q_sq;
+	Real shiftexc_Q;
+	Real shiftexc_S_x;
+	Real shiftexc_V_m;
+	Real shiftexc_lambda_Y_sqrt;
+	Real shiftexc_lambda_Y;
+	Real shiftexc_pl;
+	Real shiftexc_ph_t;
+	Real shiftexc_ph_t_sq;
+	//shifted C.21, C.24
+	Real shiftexc_r1;
+	Real shiftexc_r2;
+	Real shiftexc_r3;
+	Real shiftexc_r4;
+	Real shiftexc_r5;
+
+	Real rex;//[43]
+	Real shiftexc_rex;
+
+        
 	/// \}
 
 	/// Discard the radiative kinematic variables to get a Kinematics describing

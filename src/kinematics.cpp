@@ -291,21 +291,33 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 	
 	//Exclusive related quantities
 	m_n= 0.9395612928;
+        Rex= (sq(M)+t+(1-z)*S_x-sq(m_n))/(1+tau-mu);//check this, px is SIDIS px? mu is SIDIS mu? S_x is SIDIS ?
+        //shift_Rex= (sq(M)+shift_t+(1-shift_z)*shift_S_x-sq(m_n))/(1+tau-mu);
+	shiftexc_W_sq = W_sq-(1+tau)*Rex;
+	shiftexc_W = sqrt(shiftexc_W_sq);
+	shiftexc_t = t+(mu-tau)*Rex;
+	shiftexc_Q_sq = Q_sq+Rex*tau;
+        shiftexc_S_x = S_x-Rex;//need to check this
+        shiftexc_V_m = 1/2*(sq(mh)-shiftexc_Q_sq-shiftexc_t);//check this 
+        shiftexc_lambda_Y = shiftexc_S_x+4*sq(M)*shiftexc_Q_sq;//check this
+        shiftexc_lambda_Y_sqrt = sqrt(shiftexc_lambda_Y);
+	shiftexc_pl = (z*S_x*(S_x-Rex)-2*sq(M)*(2*V_m-mu*Rex))/(2*M*sqrt(shiftexc_lambda_Y));
+	shiftexc_ph_t_sq = sq(ph_0)-sq(shiftexc_pl)-sq(mh); 
+	//ph_t_sq + 1./(shiftexc_lambda_Y)*((sq(Rex) - 2.*lambda_RY)*sq(ph_l)+(lambda_Y_sqrt*lambda_RV*ph_l)/M-sq(lambda_RV)/(4.*sq(M)));
+        shiftexc_ph_t = sqrt(shift_ph_t_sq);
 	r1=sq(sqrt(W_sq)+M)+Q_sq;
 	r2=sq(sqrt(W_sq)-M)+Q_sq;
 	r3=sq(sqrt(W_sq)+m_n)-sq(mh);
 	r4=sq(sqrt(W_sq)-m_n)-sq(mh);
 	r5=W_sq*(sq(M)+sq(mh)+sq(m_n)-Q_sq-2*t)+(sq(M)+Q_sq)*(sq(mh)-sq(m_n))-sq(W_sq);
 	rex=2*(kin.Q_sq*(sq(kin.M)-sq(m_n)+kin.S_x+kin.t)+kin.S_x*kin.V_m)/kin.lambda_Y_sqrt;
-	shift_r1=sq(sqrt(shift_W_sq)+M)+shift_Q_sq;
-	shift_r2=sq(sqrt(shift_W_sq)-M)+shift_Q_sq;
-	shift_r3=sq(sqrt(shift_W_sq)+m_n)-sq(mh);
-	shift_r4=sq(sqrt(shift_W_sq)-m_n)-sq(mh);
-	shift_r5=shift_W_sq*(sq(M)+sq(mh)+sq(m_n)-shift_Q_sq-2*shift_t)+(sq(M)+shift_Q_sq)*(sq(mh)-sq(m_n))-sq(shift_W_sq);
-	shift_rex=2*(shift_Q_sq*(sq(kin.M)-sq(m_n)+shift_S_x+shift_t)+shift_S_x*V_m)/shift_lambda_Y_sqrt;
+	shiftexc_r1=sq(sqrt(shiftexc_W_sq)+M)+shiftexc_Q_sq;
+	shiftexc_r2=sq(sqrt(shiftexc_W_sq)-M)+shiftexc_Q_sq;
+	shiftexc_r3=sq(sqrt(shiftexc_W_sq)+m_n)-sq(mh);
+	shiftexc_r4=sq(sqrt(shiftexc_W_sq)-m_n)-sq(mh);
+	shiftexc_r5=shiftexc_W_sq*(sq(M)+sq(mh)+sq(m_n)-shiftexc_Q_sq-2*shiftexc_t)+(sq(M)+shiftexc_Q_sq)*(sq(mh)-sq(m_n))-sq(shiftexc_W_sq);
+	shiftexc_rex=2*(shiftexc_Q_sq*(sq(kin.M)-sq(m_n)+shiftexc_S_x+shiftexc_t)+shiftexc_S_x*shiftexc_V_m)/shiftexc_lambda_Y_sqrt;
 
-        Rex= (sq(M)+t+(1-z)*S_x-sq(m_n))/(1+tau-mu);
-        shift_Rex= (sq(M)+shift_t+(1-shift_z)*shift_S_x-sq(m_n))/(1+tau-mu);
 
 
 	// TODO: Fill in equation number from derivations.

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "sidis/kinematics.hpp"
+#include "sidis/vector.hpp"
 using namespace sidis::kin;
 using namespace sidis;
 namespace sidis{namespace exc{
@@ -131,29 +132,29 @@ struct EXCLU{
   explicit EXCLU(KinematicsRad kin);
 };
 struct EXCUT{
-  double H1_010;
-  double H2_010;
-  double H3_010;
-  double H4_010;
-  double H6_100;
-  double H8_100;
-  explicit EXCUT(KinematicsRad kin);
+	math::Vec3 H1_010;
+	math::Vec3 H2_010;
+	math::Vec3 H3_010;
+	math::Vec3 H4_010;
+	math::Vec3 H6_100;
+	math::Vec3 H8_100;
+	explicit EXCUT(KinematicsRad kin);
 };
 struct EXCLT{
-  double H5_010;
-  double H7_100;
-  double H9_100;
-  explicit EXCLT(KinematicsRad kin);
+	math::Vec3 H5_010;
+	math::Vec3 H7_100;
+	math::Vec3 H9_100;
+	explicit EXCLT(KinematicsRad kin);
 };
 struct EXCUL{
-  double H6_001;
-  double H8_001;
-  explicit EXCUL(KinematicsRad kin);
+	math::Vec3 H6_001;
+	math::Vec3 H8_001;
+	explicit EXCUL(KinematicsRad kin);
 };
 struct EXCLL{
-  double H7_001;	
-  double H9_001;
-  explicit EXCLL(KinematicsRad kin);
+	math::Vec3 H7_001;	
+	math::Vec3 H9_001;
+	explicit EXCLL(KinematicsRad kin);
 };
 
 }}//namespace 

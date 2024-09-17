@@ -81,6 +81,15 @@ math::Transform3 shift_from_target(kin::KinematicsRad const& kin);
 math::Transform3 hadron_from_shift(kin::KinematicsRad const& kin);
 /// Transformation from hadron frame to shift frame.
 math::Transform3 shift_from_hadron(kin::KinematicsRad const& kin);
+
+/// Transformation from shiftexc frame to target frame.
+math::Transform3 target_from_shiftexc(kin::KinematicsRad const& kin);
+/// Transformation from target frame to shiftexc frame.
+math::Transform3 shiftexc_from_target(kin::KinematicsRad const& kin);
+/// Transformation from shiftexc frame to hadron frame.
+math::Transform3 hadron_from_shiftexc(kin::KinematicsRad const& kin);
+/// Transformation from hadron frame to shiftexc frame.
+math::Transform3 shiftexc_from_hadron(kin::KinematicsRad const& kin);
 /// \}
 
 }
