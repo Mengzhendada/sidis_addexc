@@ -896,35 +896,53 @@ Real xs::EXC_XS_FROM_BASE_P(KinematicsRad kin,Real lambda_e,Vec3& eta)
 //    return integral;
 //}
 
+//Define the exc integrand function
+//int integrand(unsigned ndim, const double *x, void *data, unsigned fdim, double *fval){
+//	KinematicsRad *kinrad = static_cast<KinematicsRad*>(data);
+//	KinematicsRad kin_temp(*kinrad,x[0],x[1],1.0);
+//	fval[0] = EXC_XS_FROM_BASW_P(kinrad,lambda_e,eta);
+//	return 0;
+//}
+
 Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 	
 	KinematicsRad kin_rad(kin,1.1,1.0,1.0);
 	double taumin = kin_rad.tau_min;
 	double taumax = kin_rad.tau_max;
+	//double lower[2] = {taumin,0.0};
+	//double upper[2] = {taumax,2*PI};
+	//cubature::EstErr<Real> result = cubature::cubature<2>(
+	//	integrand,
+	//	lower,upper,
+	//	10000,0.0,1e-8,
+	//	&kinrad
+	//	);
+	
+	//Get xs for each tau phi bins
 	int ntau = 100;
 	int nphi = 100;
 	double htau = (taumax-taumin)/ntau;
 	double hphi = (2*PI)/nphi;
 	Real integral = 0.0;
-	for (int i = 0; i< ntau; ++i){
+	for (int i = 0; i< 10; ++i){
 		double dtau = taumin+(i+0.5)*htau;
-		for (int j=0; j<nphi;++j){
+		for (int j=0; j<10;++j){
 			double dphi=0+(j+0.5)*hphi;
-			KinematicsRad kinrad(kin,dtau,dphi,1.0);
+			KinematicsRad kinrad(kin,dtau,dphi,1.0);//Kinrad(kin,dtau,dphi,1.0_ don't worry, the last number is R, which for exc case, I hard coded Rex, not using this 1.0.
 			Real xs =  EXC_XS_FROM_BASE_P(kinrad, lambda_e, eta);
 			integral+=xs*dtau*dphi;
-			//std::cout<<" check integ j"<<j<<std::endl;
-			//std::cout<<" check integ"<<xs<<std::endl;
-			//std::cout<<" check W2 "<<(kinrad.shift_W_sq)<<" Q2 "<<kinrad.shift_Q_sq<<std::endl;
-			//std::cout<<dtau<<" "<<dphi<<" "<<xs<<std::endl;
+			std::cout<<" check integ j"<<j<<std::endl;
+			std::cout<<" check integ"<<xs<<std::endl;
+			std::cout<<" check W2 "<<(kinrad.shift_W_sq)<<" Q2 "<<kinrad.shift_Q_sq<<std::endl;
+			std::cout<<dtau<<" "<<dphi<<" "<<xs<<std::endl;
 		}
-		//std::cout<<"check integ i "<<i<<std::endl;
+		std::cout<<"check integ i "<<i<<std::endl;
 	}
 	//std::cout<<"check exc_integ function, Rex "<<b.Rex<<std::endl;
 
-	Real xs =  EXC_XS_FROM_BASE_P(kin_rad, lambda_e, eta);
-	std::cout<<"check exc_integ function, the macro "<<xs<<std::endl;
-
+	//Real xs =  EXC_XS_FROM_BASE_P(kin_rad, lambda_e, eta);
+	//std::cout<<"check exc_integ function, the macro "<<xs<<std::endl;
+        
 	return integral;
 }
 

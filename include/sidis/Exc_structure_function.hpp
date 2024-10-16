@@ -12,7 +12,13 @@ namespace sidis{namespace exc{
 const double m_n = 0.9395612928;
 const double ALPHA = 7.2973525664e-3L;
 double Get_thetacm(double W, double Q2, double t);
-double Get_Interpolated(double y0,double y1,double x0,double x1,double x);
+struct DataPoint {
+	double Q2,W, theta;
+	std::vector<double> values;
+};
+void printDataPoint(DataPoint dp);
+double linearInterpolated(double x,double x0,double x1,double y0,double y1);
+//std::vector<DataPoint> readDataFromFile(const std::string& filename);
 std::vector<double> Get_exc_sf(double W, double Q2, double t);
 struct EXC_A{
   double A1r;
