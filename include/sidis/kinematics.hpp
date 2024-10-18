@@ -227,6 +227,12 @@ struct Kinematics {
 	/// Cached \f$\sin\phi\f$.
 	Real sin_phi;
 	/// \}
+	
+	/// The lower kinematic bound on \f$\tau\f$, for RC process.
+	Real tau_min;
+	/// The upper kinematic bound on \f$\tau\f$.
+	Real tau_max;
+	
 
 	/// Initialize an empty Kinematics in an invalid state.
 	Kinematics() = default;

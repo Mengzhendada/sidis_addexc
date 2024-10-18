@@ -950,7 +950,7 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 EXC::EXC(KinematicsRad const& kin) {
 	// Equation [36].
 	coeff = -(std::pow(ALPHA, 3)*kin.S*sq(kin.S_x))
-		/(512.*std::pow(PI,5)*kin.M*kin.ph_l*kin.lambda_S*kin.lambda_Y_sqrt*(1-kin.tau-kin.mu)*sq(kin.shift_Q_sq));
+		/(512.*std::pow(PI,5)*kin.M*kin.ph_l*kin.lambda_S*kin.lambda_Y_sqrt*(1-kin.tau-kin.mu)*sq(kin.shiftexc_Q_sq));
 	Rex = kin.Rex;
 }
 

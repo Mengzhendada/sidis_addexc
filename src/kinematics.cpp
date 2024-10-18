@@ -109,6 +109,10 @@ Kinematics::Kinematics(Particles const& ps, Real S, PhaseSpace const& ph_space) 
 
 	// Equation [1.18]. Modified slightly to include a `Q^4` denominator.
 	C_1 = (4.*M*ph_l*(Q_sq + 2.*x*sq(M)))/sq(sq(Q_sq));
+	
+	//It is for RC
+	tau_min = (S_x - lambda_Y_sqrt)/(2.*sq(M));
+	tau_max = (S_x + lambda_Y_sqrt)/(2.*sq(M));
 }
 
 KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R) :
@@ -170,6 +174,8 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 		k1_t(kin.k1_t),
 		cos_phi(kin.cos_phi),
 		sin_phi(kin.sin_phi),
+		tau_min(kin.tau_min),
+		tau_max(kin.tau_max),
 		tau(tau),
 		phi_k(phi_k),
 		R(R) {
@@ -177,8 +183,8 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 	sin_phi_k = std::sin(phi_k);
 
 	// Equation [1.44].
-	tau_min = (S_x - lambda_Y_sqrt)/(2.*sq(M));
-	tau_max = (S_x + lambda_Y_sqrt)/(2.*sq(M));
+	//tau_min = (S_x - lambda_Y_sqrt)/(2.*sq(M));
+	//tau_max = (S_x + lambda_Y_sqrt)/(2.*sq(M));
 
 	// TODO: Fill in equation number from derivations.
 	lambda_H = sq(z*S_x) - 4.*sq(M)*sq(mh);
@@ -299,12 +305,13 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 	shiftexc_Q_sq = Q_sq+Rex*tau;
         shiftexc_S_x = S_x-Rex;//need to check this
         shiftexc_V_m = 1/2*(sq(mh)-shiftexc_Q_sq-shiftexc_t);//check this 
-        shiftexc_lambda_Y = shiftexc_S_x+4*sq(M)*shiftexc_Q_sq;//check this
+        shiftexc_lambda_Y = sq(shiftexc_S_x)+4*sq(M)*shiftexc_Q_sq;//check this
         shiftexc_lambda_Y_sqrt = sqrt(shiftexc_lambda_Y);
-	shiftexc_pl = (z*S_x*(S_x-Rex)-2*sq(M)*(2*V_m-mu*Rex))/(2*M*sqrt(shiftexc_lambda_Y));
-	shiftexc_ph_t_sq = sq(ph_0)-sq(shiftexc_pl)-sq(mh); 
+	//shiftexc_pl = (z*S_x*(S_x-Rex)-2*sq(M)*(2*V_m-mu*Rex))/(2*M*sqrt(shiftexc_lambda_Y));
+	shiftexc_ph_t_sq = ((sq(M)+shiftexc_S_x+shiftexc_t-sq(m_n))*(shiftexc_S_x*(sq(mh)-shiftexc_Q_sq-shiftexc_t)+shiftexc_Q_sq*(sq(M)+shiftexc_S_x+shiftexc_t-sq(m_n)))-sq(mh)*shiftexc_S_x-sq(M)*(sq(sq(mh)+shiftexc_Q_sq+shiftexc_t)-4*sq(mh)*shiftexc_t))/shiftexc_lambda_Y;
+	//sq(ph_0)-sq(shiftexc_pl)-sq(mh); 
 	//ph_t_sq + 1./(shiftexc_lambda_Y)*((sq(Rex) - 2.*lambda_RY)*sq(ph_l)+(lambda_Y_sqrt*lambda_RV*ph_l)/M-sq(lambda_RV)/(4.*sq(M)));
-        shiftexc_ph_t = sqrt(shift_ph_t_sq);
+        shiftexc_ph_t = sqrt(shiftexc_ph_t_sq);
 	r1=sq(sqrt(W_sq)+M)+Q_sq;
 	r2=sq(sqrt(W_sq)-M)+Q_sq;
 	r3=sq(sqrt(W_sq)+m_n)-sq(mh);
@@ -316,8 +323,8 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 	shiftexc_r3=sq(sqrt(shiftexc_W_sq)+m_n)-sq(mh);
 	shiftexc_r4=sq(sqrt(shiftexc_W_sq)-m_n)-sq(mh);
 	shiftexc_r5=shiftexc_W_sq*(sq(M)+sq(mh)+sq(m_n)-shiftexc_Q_sq-2*shiftexc_t)+(sq(M)+shiftexc_Q_sq)*(sq(mh)-sq(m_n))-sq(shiftexc_W_sq);
-	shiftexc_rex=2*(shiftexc_Q_sq*(sq(kin.M)-sq(m_n)+shiftexc_S_x+shiftexc_t)+shiftexc_S_x*shiftexc_V_m)/shiftexc_lambda_Y_sqrt;
-
+	//shiftexc_rex=2*(shiftexc_Q_sq*(sq(kin.M)-sq(m_n)+shiftexc_S_x+shiftexc_t)+shiftexc_S_x*shiftexc_V_m)/shiftexc_lambda_Y_sqrt;
+        shiftexc_rex = sq(M)*(shiftexc_Q_sq+shiftexc_t-sq(mh))+shiftexc_Q_sq*(shiftexc_Q_sq+shiftexc_t-2*sq(m_n)+sq(mh))+(sq(mh)+shiftexc_Q_sq-shiftexc_t)*shiftexc_W_sq;
 
 
 	// TODO: Fill in equation number from derivations.
