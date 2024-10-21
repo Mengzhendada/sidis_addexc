@@ -907,6 +907,102 @@ Real xs::EXC_XS_FROM_BASE_P(KinematicsRad kin,Real lambda_e,Vec3& eta)
 //}
 
 Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
+	/*
+	std::cout<<"check taus and taup Q2: "<<kin.Q_sq<<" S: "<<kin.S<<" X: "<<kin.X<<std::endl;
+	double taus = -kin.Q_sq/kin.S;
+	double taup = kin.Q_sq/kin.X;
+	std::cout<<" check taus and taup taus: "<<taus<<" taup "<<taup<<std::endl;
+	std::cout<<" check taumin:: "<<kin.tau_min<<" taumax "<<kin.tau_max<<std::endl;
+	constexpr std::size_t D = 2;	
+	auto func = [&](std::array<Real, 2> x) -> Real {
+		KinematicsRad kinrad(kin, x[0], x[1], 1.0);
+		Real xs = EXC_XS_FROM_BASE_P(kinrad, lambda_e, eta);
+		return std::isnan(xs) ? 0.0 : xs;
+	};
+	// Define the GSL-compatible integrand function
+	auto gsl_integrand = [](double* xs, size_t dim, void* data) -> double {
+		auto* func_ptr = static_cast<decltype(func)*>(data);  // Cast void* to lambda pointer
+		std::array<double, D> point;
+		std::move(xs, xs + D, point.begin());  // Convert raw input to std::array
+		return (*func_ptr)(point);  // Call the lambda function
+	};
+	const gsl_rng_type* T;
+	gsl_rng* r;
+	gsl_rng_env_setup();
+	T = gsl_rng_default;
+	r = gsl_rng_alloc(T);
+	gsl_monte_vegas_state* s = gsl_monte_vegas_alloc(D);
+
+	// Prepare GSL function structure
+	gsl_monte_function func_gsl = {gsl_integrand, D, &func};
+
+	double xl1[D] = {taus-0.1}
+        	
+        */
+	constexpr std::size_t D = 2;	
+	auto func = [&](std::array<Real, 2> x) -> Real {
+		KinematicsRad kinrad(kin, x[0], x[1], 1.0);
+		Real xs = EXC_XS_FROM_BASE_P(kinrad, lambda_e, eta);
+		return std::isnan(xs) ? 0.0 : xs;
+	};
+	// Define the GSL-compatible integrand function
+	auto gsl_integrand = [](double* xs, size_t dim, void* data) -> double {
+		auto* func_ptr = static_cast<decltype(func)*>(data);  // Cast void* to lambda pointer
+		std::array<double, D> point;
+		std::move(xs, xs + D, point.begin());  // Convert raw input to std::array
+		return (*func_ptr)(point);  // Call the lambda function
+	};
+
+	// Define the integration bounds
+	double xl[D] = {kin.tau_min, 0.0};  // Lower bounds
+	double xu[D] = {kin.tau_max, 2 * M_PI};  // Upper bounds
+
+	// Initialize the VEGAS state
+	gsl_monte_vegas_state* s = gsl_monte_vegas_alloc(D);
+
+	// Set up the GSL Monte Carlo function structure
+	gsl_monte_function func_gsl = {gsl_integrand, D, &func};
+
+	// Initialize the random number generator
+	const gsl_rng_type* T;
+	gsl_rng* r;
+	gsl_rng_env_setup();
+	T = gsl_rng_default;
+	r = gsl_rng_alloc(T);
+
+	// Perform the VEGAS integration
+	double result, error;
+	size_t initial_calls = 1000;  // Initial sampling points for grid setup
+	size_t refinement_calls = 50000;  // Refined sampling points for accurate result
+
+	// First burn-in iteration to establish the sampling grid
+	gsl_monte_vegas_integrate(&func_gsl, xl, xu, D, initial_calls, r, s, &result, &error);
+	std::cout << "First burn-in: " << result << " +/- " << error << std::endl;
+	std::cout << "Chi-squared: " << gsl_monte_vegas_chisq(s) << std::endl;
+
+	// Optional: Refine the grid with multiple iterations
+	for (int i = 0; i < 3; ++i) {
+		std::cout << "Refining grid, iteration " << i + 1 << "..." << std::endl;
+		gsl_monte_vegas_integrate(&func_gsl, xl, xu, D, refinement_calls, r, s, &result, &error);
+		std::cout << "Iteration " << i + 1 << ": " << result << " +/- " << error << std::endl;
+		std::cout << "Chi-squared: " << gsl_monte_vegas_chisq(s) << std::endl;
+
+		// Check if chi-squared is close to 1.0, indicating convergence
+		if (std::abs(gsl_monte_vegas_chisq(s) - 1.0) < 0.1) {
+			std::cout << "Converged!" << std::endl;
+			break;
+		}
+	}
+
+	// Output final result and error
+	std::cout << "Final result: " << result << " +/- " << error << std::endl;
+
+	// Clean up
+	gsl_monte_vegas_free(s);
+	gsl_rng_free(r);
+
+	return result;
+	/*//Vegas, still taking forever
 	constexpr std::size_t D = 2;	
 	auto func = [&](std::array<Real, 2> x) -> Real {
 		KinematicsRad kinrad(kin, x[0], x[1], 1.0);
@@ -958,6 +1054,7 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 	gsl_rng_free(r);
 
 	return result;
+	*/
 	/*
 	// Define bounds using std::array, but correctly pass them to cubature::Point
 	cubature::Point<2, double> lower = {kin.tau_min, 0.0};

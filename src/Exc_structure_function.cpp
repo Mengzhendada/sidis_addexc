@@ -255,18 +255,31 @@ std::vector<double> Get_exc_sf(double W, double Q2, double t) {
 
 EXC_A::EXC_A(double W, double Q2, double t){
 	//std::cout<<" check in EXC_A, W: "<<W<<" Q2: "<<Q2<<" t: "<<t<<std::endl;
-  A1r = Get_exc_sf(W,Q2,t)[0];
-  A1i = Get_exc_sf(W,Q2,t)[1];
-  A2r = Get_exc_sf(W,Q2,t)[2];
-  A2i = Get_exc_sf(W,Q2,t)[3];
-  A3r = Get_exc_sf(W,Q2,t)[4];
-  A3i = Get_exc_sf(W,Q2,t)[5];
-  A4r = Get_exc_sf(W,Q2,t)[6];
-  A4i = Get_exc_sf(W,Q2,t)[7];
-  A5r = Get_exc_sf(W,Q2,t)[8];
-  A5i = Get_exc_sf(W,Q2,t)[9];
-  A6r = Get_exc_sf(W,Q2,t)[10];
-  A6i = Get_exc_sf(W,Q2,t)[11];
+        std::vector<double> As = Get_exc_sf(W,Q2,t);
+	A1r = As[0];
+	A1i = As[1];
+	A2r = As[2];
+	A2i = As[3];
+	A3r = As[4];
+	A3i = As[5];
+	A4r = As[6];
+	A4i = As[7];
+        A5r = As[8];
+        A5i = As[9];
+        A6r = As[10];
+        A6i = As[11];
+	//A1r = Get_exc_sf(W,Q2,t)[0];
+	//A1i = Get_exc_sf(W,Q2,t)[1];
+	//A2r = Get_exc_sf(W,Q2,t)[2];
+	//A2i = Get_exc_sf(W,Q2,t)[3];
+	//A3r = Get_exc_sf(W,Q2,t)[4];
+	//A3i = Get_exc_sf(W,Q2,t)[5];
+	//A4r = Get_exc_sf(W,Q2,t)[6];
+	//A4i = Get_exc_sf(W,Q2,t)[7];
+	//A5r = Get_exc_sf(W,Q2,t)[8];
+	//A5i = Get_exc_sf(W,Q2,t)[9];
+	//A6r = Get_exc_sf(W,Q2,t)[10];
+	//A6i = Get_exc_sf(W,Q2,t)[11];
 
 }
 
