@@ -292,8 +292,6 @@ EXC_A::EXC_A(double W, double Q2, double t){
         A5i = As[9];
         A6r = As[10];
         A6i = As[11];
-
-
 	//A1r = Get_exc_sf(W,Q2,t)[0];
 	//A1i = Get_exc_sf(W,Q2,t)[1];
 	//A2r = Get_exc_sf(W,Q2,t)[2];
