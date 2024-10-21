@@ -61,212 +61,251 @@ std::vector<double> Get_exc_sf(double W, double Q2, double t) {
   double theta = Get_thetacm(W,Q2,t);
   //std::cout<<" check in Get_exc_sf theta "<<theta<<std::endl;
   //std::cout<<" check in Get_exc_sf W "<<W<<" Q2 "<<Q2<<" t "<<t<<std::endl;
-  std::vector<DataPoint> data;
-  std::ifstream file("src/exc_sf_set/exclu.grid");
-  if(!file.is_open()){
-    std::cout<<"Error opening file."<<std::endl;
-  }
-  std::string line;
-  std::getline(file,line);//Ignore the first row
-  while (std::getline(file,line)){
-    std::istringstream iss(line);
-    DataPoint dp;
-    iss>>dp.Q2>>dp.W>>dp.theta;
-    double val;
-    while (iss >>val){
-	    dp.values.push_back(val);//push the rest of the values
-    }
-    data.push_back(dp);
-  }
-    // This is a simplified trilinear interpolation between the 8 surrounding points
+	double a2=1.15,a30=-1.23,a31=0.16,a3;
+	double Q2corr,Wcorr,Q2arg,W2arg;
+	if(Q2>5){
+		Q2corr=std::pow(5.0,a2)/std::pow(Q2,a2);
+		Q2arg = 5.0;
+	}
+	else{
+		Q2corr=1.0;
+		Q2arg=Q2;
+	}
+	if(W>2){
+		a3=a30+a31*theta;
+		if(theta<50) a3 = a30+a31*50.0;
+		else if(theta>180) a3 = a30+a31*100.0;
+		Wcorr = std::pow(2.0,a3)/std::pow(W*W,(a3/2.0));
+		W2arg = 4.0;
+	}
+	else{
+		W2arg = W*W;
+		Wcorr = 1.0;
+	}
+	
 
-    // Find the 8 surrounding points
-    DataPoint lowerQ2_lowerW_lowerTheta, lowerQ2_lowerW_upperTheta;
-    DataPoint lowerQ2_upperW_lowerTheta, lowerQ2_upperW_upperTheta;
-    DataPoint upperQ2_lowerW_lowerTheta, upperQ2_lowerW_upperTheta;
-    DataPoint upperQ2_upperW_lowerTheta, upperQ2_upperW_upperTheta;
+	//I think I should read the file somewhere else just once
+	std::vector<DataPoint> data;
+	std::ifstream file("src/exc_sf_set/exclu.grid");
+	if(!file.is_open()){
+		std::cout<<"Error opening file."<<std::endl;
+	}
+	std::string line;
+	std::getline(file,line);//Ignore the first row
+	while (std::getline(file,line)){
+		std::istringstream iss(line);
+		DataPoint dp;
+		iss>>dp.Q2>>dp.W>>dp.theta;
+		double val;
+		while (iss >>val){
+			dp.values.push_back(val);//push the rest of the values
+		}
+		data.push_back(dp);
+	}
+	// This is a simplified trilinear interpolation between the 8 surrounding points
 
-    bool foundtheta=false;
-    bool foundQ2=false;
-    bool foundW = false;
+	// Find the 8 surrounding points
+	DataPoint lowerQ2_lowerW_lowerTheta, lowerQ2_lowerW_upperTheta;
+	DataPoint lowerQ2_upperW_lowerTheta, lowerQ2_upperW_upperTheta;
+	DataPoint upperQ2_lowerW_lowerTheta, upperQ2_lowerW_upperTheta;
+	DataPoint upperQ2_upperW_lowerTheta, upperQ2_upperW_upperTheta;
 
-    // Find the 8 surrounding points for Q2, W, and theta (you can optimize this search)
-    for (size_t i = 0; i < data.size() - 1; ++i) {
+	bool foundtheta=false;
+	bool foundQ2=false;
+	bool foundW = false;
 
-	    // Check for exact match on Q2 and W
-	    if (Q2 == data[i].Q2 && W == data[i].W / 1000) {
+	// Find the 8 surrounding points for Q2, W, and theta (you can optimize this search)
+	for (size_t i = 0; i < data.size() - 1; ++i) {
 
-		    // We only need to interpolate over theta
-		    if ((theta - data[i].theta)>0&&(theta - data[i].theta) < 3 ) {
-			    //std::cout << "Exact match for Q2 and W at index " << i << std::endl;
-			    lowerQ2_lowerW_lowerTheta = data[i];
-			    lowerQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    lowerQ2_upperW_lowerTheta = data[i];
-			    lowerQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    upperQ2_lowerW_lowerTheta = data[i];
-			    upperQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    upperQ2_upperW_lowerTheta = data[i];
-			    upperQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    foundtheta=true;
-			    foundQ2=true;
-			    foundW=true;
-		    }
-	    }
-	    else if((Q2-data[i].Q2)==0 && abs(W-data[i].W/1000)>0){
-		    if ((W - data[i].W / 1000) > 0 && (1000*W - data[i].W) < 20 &&
-			(theta - data[i].theta) > 3&&(theta - data[i].theta) < 3) {
-		    //std::cout<<" why W lower " <<abs(1000*W-data[i].W)<<std::endl;
-			    //std::cout << "Exact match for Q2 at index " << i << " lower W "<<std::endl;
+		// Check for exact match on Q2 and W
+		if (Q2 == data[i].Q2 && W == data[i].W / 1000) {
 
-			    lowerQ2_lowerW_lowerTheta = data[i];
-			    lowerQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    upperQ2_lowerW_lowerTheta = data[i];
-			    upperQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    foundtheta=true;
-			    foundQ2=true;
-			    foundW=true;
-		    }
-		    else if ((data[i].W / 1000 - W) > 0 && (data[i].W - 1000*W) < 20 &&
-			(theta - data[i].theta) > 3&&(theta - data[i].theta) < 3) {
-		    //std::cout<<" why W upper " <<abs(1000*W-data[i].W)<<std::endl;
-			     //std::cout << "Exact match for Q2 at index " << i << " upper W "<< std::endl;
-			    lowerQ2_upperW_lowerTheta = data[i];
-			    lowerQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    upperQ2_upperW_lowerTheta = data[i];
-			    upperQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    foundtheta=true;
-			    foundQ2=true;
-			    foundW=true;
-		    }
-	    }//Q2 exactly match
-	    // Check for exact match on W (but not Q2)
-	    else if (W == data[i].W / 1000 && abs(Q2-data[i].Q2)>0) {
+			// We only need to interpolate over theta
+			if ((theta - data[i].theta)>0&&(theta - data[i].theta) < 3 ) {
+				//std::cout << "Exact match for Q2 and W at index " << i << std::endl;
+				lowerQ2_lowerW_lowerTheta = data[i];
+				lowerQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				lowerQ2_upperW_lowerTheta = data[i];
+				lowerQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				upperQ2_lowerW_lowerTheta = data[i];
+				upperQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				upperQ2_upperW_lowerTheta = data[i];
+				upperQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				foundtheta=true;
+				foundQ2=true;
+				foundW=true;
+			}
+		}
+		else if((Q2-data[i].Q2)==0 && abs(W-data[i].W/1000)>0){
+			if ((W - data[i].W / 1000) > 0 && (1000*W - data[i].W) < 20 &&
+			    (theta - data[i].theta) > 3&&(theta - data[i].theta) < 3) {
+				//std::cout<<" why W lower " <<abs(1000*W-data[i].W)<<std::endl;
+				//std::cout << "Exact match for Q2 at index " << i << " lower W "<<std::endl;
 
-		    // We only need to interpolate over Q2 and theta
-		    if ((Q2 - data[i].Q2) > 0 && (Q2 - data[i].Q2) < 0.3 && (theta - data[i].theta)>0&&(theta - data[i].theta) < 3) {
-			    //std::cout << "Exact match for W at index " << i << std::endl;
-			    lowerQ2_lowerW_lowerTheta = data[i];
-			    lowerQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    lowerQ2_upperW_lowerTheta = data[i];
-			    lowerQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    foundtheta=true;
-			    foundQ2=true;
-			    foundW=true;
-		    }
-		    else if ((data[i].Q2 - Q2) > 0 && (data[i].Q2 - Q2) < 0.3 &&  (theta - data[i].theta)>0&&(theta - data[i].theta) < 3) {
-			    //std::cout << "Exact match for W at index " << i << std::endl;
-			    upperQ2_lowerW_lowerTheta = data[i];
-			    upperQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    upperQ2_upperW_lowerTheta = data[i];
-			    upperQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-			    foundtheta=true;
-			    foundQ2=true;
-			    foundW=true;
-		    }
-	    }
-	    //regular
-	    else if (
-		    (Q2-data[i].Q2)>0 && (Q2-data[i].Q2)<0.3 && 
-		    (W-data[i].W/1000)>0 && (W-data[i].W/1000)<0.02 &&
-		    (theta-data[i].theta)>0&&(theta-data[i].theta) < 3
-	       ) {
-		    //std::cout<< " check in Get_exc_sf for loop lowerQ2 lowerW "<<i<<std::endl;
+				lowerQ2_lowerW_lowerTheta = data[i];
+				lowerQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				upperQ2_lowerW_lowerTheta = data[i];
+				upperQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				foundtheta=true;
+				foundQ2=true;
+				foundW=true;
+			}
+			else if ((data[i].W / 1000 - W) > 0 && (data[i].W - 1000*W) < 20 &&
+				 (theta - data[i].theta) > 3&&(theta - data[i].theta) < 3) {
+				//std::cout<<" why W upper " <<abs(1000*W-data[i].W)<<std::endl;
+				//std::cout << "Exact match for Q2 at index " << i << " upper W "<< std::endl;
+				lowerQ2_upperW_lowerTheta = data[i];
+				lowerQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				upperQ2_upperW_lowerTheta = data[i];
+				upperQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				foundtheta=true;
+				foundQ2=true;
+				foundW=true;
+			}
+		}//Q2 exactly match
+		// Check for exact match on W (but not Q2)
+		else if (W == data[i].W / 1000 && abs(Q2-data[i].Q2)>0) {
 
-		    lowerQ2_lowerW_lowerTheta = data[i];
-		    lowerQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-		    foundtheta = true;
-	    }
-	    else if(
-		    (Q2-data[i].Q2)>0 && (Q2-data[i].Q2)<0.3 && 
-		    (data[i].W/1000-W)>0 &&(data[i].W/1000-W)<0.02 &&
-		    (theta-data[i].theta)>0&&(theta-data[i].theta) < 3
-		   ){
-		    //std::cout<< " check in Get_exc_sf for loop lowerQ2 upperW "<<i<<std::endl;
-		    lowerQ2_upperW_lowerTheta = data[i];
-		    lowerQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-		    foundW = true;
-	    }
-	    else if(
-		    (data[i].Q2-Q2)>0 && (data[i].Q2-Q2)<0.3 && 
-		    (W-data[i].W/1000)>0 && (W-data[i].W/1000)<0.02 &&
-		    (theta-data[i].theta)>0&&(theta-data[i].theta) < 3
-		   ){
-		    //std::cout<< " check in Get_exc_sf for loop upperQ2 lowerW "<<i<<std::endl;
-		    upperQ2_lowerW_lowerTheta = data[i];
-		    upperQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-		    foundQ2=true;
-	    }
-	    else if(
-		    (data[i].Q2-Q2)>0 && (data[i].Q2-Q2)<0.3 && 
-		    (data[i].W/1000-W)>0 && (data[i].W/1000-W)<0.02 &&
-		    (theta-data[i].theta)>0&&(theta-data[i].theta) < 3
-		   ){
-		    //std::cout<< " check in Get_exc_sf for loop upperQ2 upperW "<<i<<std::endl;
-		    upperQ2_upperW_lowerTheta = data[i];
-		    upperQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
-	    }
-    }
+			// We only need to interpolate over Q2 and theta
+			if ((Q2 - data[i].Q2) > 0 && (Q2 - data[i].Q2) < 0.3 && (theta - data[i].theta)>0&&(theta - data[i].theta) < 3) {
+				//std::cout << "Exact match for W at index " << i << std::endl;
+				lowerQ2_lowerW_lowerTheta = data[i];
+				lowerQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				lowerQ2_upperW_lowerTheta = data[i];
+				lowerQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				foundtheta=true;
+				foundQ2=true;
+				foundW=true;
+			}
+			else if ((data[i].Q2 - Q2) > 0 && (data[i].Q2 - Q2) < 0.3 &&  (theta - data[i].theta)>0&&(theta - data[i].theta) < 3) {
+				//std::cout << "Exact match for W at index " << i << std::endl;
+				upperQ2_lowerW_lowerTheta = data[i];
+				upperQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				upperQ2_upperW_lowerTheta = data[i];
+				upperQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+				foundtheta=true;
+				foundQ2=true;
+				foundW=true;
+			}
+		}
+		//regular
+		else if (
+			(Q2-data[i].Q2)>0 && (Q2-data[i].Q2)<0.3 && 
+			(W-data[i].W/1000)>0 && (W-data[i].W/1000)<0.02 &&
+			(theta-data[i].theta)>0&&(theta-data[i].theta) < 3
+			) {
+			//std::cout<< " check in Get_exc_sf for loop lowerQ2 lowerW "<<i<<std::endl;
 
-    if (!(foundtheta&&foundQ2&&foundW)) {
-        std::cerr << "Could not find appropriate data points for interpolation." << std::endl;
-        return std::vector<double>(12, 0.0); // Return zeros if not found
-    }
-    
-    //print out the eight edges to check
-    //std::cout<<"lowerQ2 lowerW lowerTheta"<<std::endl;
-    //printDataPoint(lowerQ2_lowerW_lowerTheta); 
-    //std::cout<<"lowerQ2 lowerW upperTheta"<<std::endl;
-    //printDataPoint(lowerQ2_lowerW_upperTheta); 
-    //std::cout<<"lowerQ2 upperW lowerTheta"<<std::endl;
-    //printDataPoint(lowerQ2_upperW_lowerTheta); 
-    //std::cout<<"lowerQ2 upperW upperTheta"<<std::endl;
-    //printDataPoint(lowerQ2_upperW_upperTheta); 
-    //std::cout<<"upperQ2 lowerW lowerTheta"<<std::endl;
-    //printDataPoint(upperQ2_lowerW_lowerTheta); 
-    //std::cout<<"upperQ2 lowerW upperTheta"<<std::endl;
-    //printDataPoint(upperQ2_lowerW_upperTheta); 
-    //std::cout<<"upperQ2 upperW lowerTheta"<<std::endl;
-    //printDataPoint(upperQ2_upperW_lowerTheta); 
-    //std::cout<<"upperQ2 upperW upperTheta"<<std::endl;
-    //printDataPoint(upperQ2_upperW_upperTheta); 
+			lowerQ2_lowerW_lowerTheta = data[i];
+			lowerQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+			foundtheta = true;
+		}
+		else if(
+			(Q2-data[i].Q2)>0 && (Q2-data[i].Q2)<0.3 && 
+			(data[i].W/1000-W)>0 &&(data[i].W/1000-W)<0.02 &&
+			(theta-data[i].theta)>0&&(theta-data[i].theta) < 3
+		       ){
+			//std::cout<< " check in Get_exc_sf for loop lowerQ2 upperW "<<i<<std::endl;
+			lowerQ2_upperW_lowerTheta = data[i];
+			lowerQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+			foundW = true;
+		}
+		else if(
+			(data[i].Q2-Q2)>0 && (data[i].Q2-Q2)<0.3 && 
+			(W-data[i].W/1000)>0 && (W-data[i].W/1000)<0.02 &&
+			(theta-data[i].theta)>0&&(theta-data[i].theta) < 3
+		       ){
+			//std::cout<< " check in Get_exc_sf for loop upperQ2 lowerW "<<i<<std::endl;
+			upperQ2_lowerW_lowerTheta = data[i];
+			upperQ2_lowerW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+			foundQ2=true;
+		}
+		else if(
+			(data[i].Q2-Q2)>0 && (data[i].Q2-Q2)<0.3 && 
+			(data[i].W/1000-W)>0 && (data[i].W/1000-W)<0.02 &&
+			(theta-data[i].theta)>0&&(theta-data[i].theta) < 3
+		       ){
+			//std::cout<< " check in Get_exc_sf for loop upperQ2 upperW "<<i<<std::endl;
+			upperQ2_upperW_lowerTheta = data[i];
+			upperQ2_upperW_upperTheta = (std::abs(theta - data[i].theta) == 0) ? data[i] : data[i + 1];
+		}
+	}
 
-    // Interpolate between the 8 corner points
-    std::vector<double> interpolatedValues(12, 0.0);
+	if (!(foundtheta&&foundQ2&&foundW)) {
+		std::cerr << "Could not find appropriate data points for interpolation." << std::endl;
+		return std::vector<double>(12, 0.0); // Return zeros if not found
+	}
 
-    for (size_t i = 0; i < 12; ++i) {
-        // Interpolate along the theta axis
-        double lowerQ2_lowerW = linearInterpolate(lowerQ2_lowerW_lowerTheta.theta, lowerQ2_lowerW_upperTheta.theta, lowerQ2_lowerW_lowerTheta.values[i], lowerQ2_lowerW_upperTheta.values[i], theta);
-	//std::cout<<"check each 1D"<< lowerQ2_lowerW<<" x0 "<<lowerQ2_lowerW_lowerTheta.theta<<" x1 "<< lowerQ2_lowerW_upperTheta.theta<<" y0 "<< lowerQ2_lowerW_lowerTheta.values[i]<<" y1 "<< lowerQ2_lowerW_upperTheta.values[i]<<" theta "<< theta<<std::endl;
-        double lowerQ2_upperW = linearInterpolate(lowerQ2_upperW_lowerTheta.theta, lowerQ2_upperW_upperTheta.theta, lowerQ2_upperW_lowerTheta.values[i], lowerQ2_upperW_upperTheta.values[i], theta);
-        double upperQ2_lowerW = linearInterpolate(upperQ2_lowerW_lowerTheta.theta, upperQ2_lowerW_upperTheta.theta, upperQ2_lowerW_lowerTheta.values[i], upperQ2_lowerW_upperTheta.values[i], theta);
-        double upperQ2_upperW = linearInterpolate(upperQ2_upperW_lowerTheta.theta, upperQ2_upperW_upperTheta.theta, upperQ2_upperW_lowerTheta.values[i], upperQ2_upperW_upperTheta.values[i], theta);
+	//print out the eight edges to check
+	//std::cout<<"lowerQ2 lowerW lowerTheta"<<std::endl;
+	//printDataPoint(lowerQ2_lowerW_lowerTheta); 
+	//std::cout<<"lowerQ2 lowerW upperTheta"<<std::endl;
+	//printDataPoint(lowerQ2_lowerW_upperTheta); 
+	//std::cout<<"lowerQ2 upperW lowerTheta"<<std::endl;
+	//printDataPoint(lowerQ2_upperW_lowerTheta); 
+	//std::cout<<"lowerQ2 upperW upperTheta"<<std::endl;
+	//printDataPoint(lowerQ2_upperW_upperTheta); 
+	//std::cout<<"upperQ2 lowerW lowerTheta"<<std::endl;
+	//printDataPoint(upperQ2_lowerW_lowerTheta); 
+	//std::cout<<"upperQ2 lowerW upperTheta"<<std::endl;
+	//printDataPoint(upperQ2_lowerW_upperTheta); 
+	//std::cout<<"upperQ2 upperW lowerTheta"<<std::endl;
+	//printDataPoint(upperQ2_upperW_lowerTheta); 
+	//std::cout<<"upperQ2 upperW upperTheta"<<std::endl;
+	//printDataPoint(upperQ2_upperW_upperTheta); 
 
-        // Interpolate along the W axis
-        double lowerQ2 = linearInterpolate(lowerQ2_lowerW_lowerTheta.W/1000, lowerQ2_upperW_lowerTheta.W/1000, lowerQ2_lowerW, lowerQ2_upperW, W);
-        double upperQ2 = linearInterpolate(upperQ2_lowerW_lowerTheta.W/1000, upperQ2_upperW_lowerTheta.W/1000, upperQ2_lowerW, upperQ2_upperW, W);
+	// Interpolate between the 8 corner points
+	std::vector<double> interpolatedValues(12, 0.0);
 
-        // Interpolate along the Q2 axis
-        interpolatedValues[i] = linearInterpolate(lowerQ2_lowerW_lowerTheta.Q2, upperQ2_upperW_lowerTheta.Q2, lowerQ2, upperQ2, Q2);
-    }
+	for (size_t i = 0; i < 12; ++i) {
+		// Interpolate along the theta axis
+		double lowerQ2_lowerW = linearInterpolate(lowerQ2_lowerW_lowerTheta.theta, lowerQ2_lowerW_upperTheta.theta, lowerQ2_lowerW_lowerTheta.values[i], lowerQ2_lowerW_upperTheta.values[i], theta);
+		//std::cout<<"check each 1D"<< lowerQ2_lowerW<<" x0 "<<lowerQ2_lowerW_lowerTheta.theta<<" x1 "<< lowerQ2_lowerW_upperTheta.theta<<" y0 "<< lowerQ2_lowerW_lowerTheta.values[i]<<" y1 "<< lowerQ2_lowerW_upperTheta.values[i]<<" theta "<< theta<<std::endl;
+		double lowerQ2_upperW = linearInterpolate(lowerQ2_upperW_lowerTheta.theta, lowerQ2_upperW_upperTheta.theta, lowerQ2_upperW_lowerTheta.values[i], lowerQ2_upperW_upperTheta.values[i], theta);
+		double upperQ2_lowerW = linearInterpolate(upperQ2_lowerW_lowerTheta.theta, upperQ2_lowerW_upperTheta.theta, upperQ2_lowerW_lowerTheta.values[i], upperQ2_lowerW_upperTheta.values[i], theta);
+		double upperQ2_upperW = linearInterpolate(upperQ2_upperW_lowerTheta.theta, upperQ2_upperW_upperTheta.theta, upperQ2_upperW_lowerTheta.values[i], upperQ2_upperW_upperTheta.values[i], theta);
 
-    return interpolatedValues;
+		// Interpolate along the W axis
+		double lowerQ2 = linearInterpolate(lowerQ2_lowerW_lowerTheta.W/1000, lowerQ2_upperW_lowerTheta.W/1000, lowerQ2_lowerW, lowerQ2_upperW, W);
+		double upperQ2 = linearInterpolate(upperQ2_lowerW_lowerTheta.W/1000, upperQ2_upperW_lowerTheta.W/1000, upperQ2_lowerW, upperQ2_upperW, W);
+
+		// Interpolate along the Q2 axis
+		interpolatedValues[i] = linearInterpolate(lowerQ2_lowerW_lowerTheta.Q2, upperQ2_upperW_lowerTheta.Q2, lowerQ2, upperQ2, Q2);
+	}
+
+	return interpolatedValues;
 }
 
 
 EXC_A::EXC_A(double W, double Q2, double t){
 	//std::cout<<" check in EXC_A, W: "<<W<<" Q2: "<<Q2<<" t: "<<t<<std::endl;
-  A1r = Get_exc_sf(W,Q2,t)[0];
-  A1i = Get_exc_sf(W,Q2,t)[1];
-  A2r = Get_exc_sf(W,Q2,t)[2];
-  A2i = Get_exc_sf(W,Q2,t)[3];
-  A3r = Get_exc_sf(W,Q2,t)[4];
-  A3i = Get_exc_sf(W,Q2,t)[5];
-  A4r = Get_exc_sf(W,Q2,t)[6];
-  A4i = Get_exc_sf(W,Q2,t)[7];
-  A5r = Get_exc_sf(W,Q2,t)[8];
-  A5i = Get_exc_sf(W,Q2,t)[9];
-  A6r = Get_exc_sf(W,Q2,t)[10];
-  A6i = Get_exc_sf(W,Q2,t)[11];
+        std::vector<double> As = Get_exc_sf(W,Q2,t);
+	A1r = As[0];
+	A1i = As[1];
+	A2r = As[2];
+	A2i = As[3];
+	A3r = As[4];
+	A3i = As[5];
+	A4r = As[6];
+	A4i = As[7];
+        A5r = As[8];
+        A5i = As[9];
+        A6r = As[10];
+        A6i = As[11];
+
+
+	//A1r = Get_exc_sf(W,Q2,t)[0];
+	//A1i = Get_exc_sf(W,Q2,t)[1];
+	//A2r = Get_exc_sf(W,Q2,t)[2];
+	//A2i = Get_exc_sf(W,Q2,t)[3];
+	//A3r = Get_exc_sf(W,Q2,t)[4];
+	//A3i = Get_exc_sf(W,Q2,t)[5];
+	//A4r = Get_exc_sf(W,Q2,t)[6];
+	//A4i = Get_exc_sf(W,Q2,t)[7];
+	//A5r = Get_exc_sf(W,Q2,t)[8];
+	//A5i = Get_exc_sf(W,Q2,t)[9];
+	//A6r = Get_exc_sf(W,Q2,t)[10];
+	//A6i = Get_exc_sf(W,Q2,t)[11];
 
 }
 

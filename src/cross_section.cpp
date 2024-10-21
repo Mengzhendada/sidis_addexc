@@ -907,6 +907,7 @@ Real xs::EXC_XS_FROM_BASE_P(KinematicsRad kin,Real lambda_e,Vec3& eta)
 //}
 
 Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
+	/*
 	constexpr std::size_t D = 2;	
 	auto func = [&](std::array<Real, 2> x) -> Real {
 		KinematicsRad kinrad(kin, x[0], x[1], 1.0);
@@ -958,6 +959,7 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 	gsl_rng_free(r);
 
 	return result;
+	*/
 	/*
 	// Define bounds using std::array, but correctly pass them to cubature::Point
 	cubature::Point<2, double> lower = {kin.tau_min, 0.0};
@@ -987,17 +989,20 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 	// Return the computed integral value
 	return integral[0];
         */
-	/*	
+		
 	//Get xs for each tau phi bins
+	double taumax = kin.tau_max;
+	double taumin = kin.tau_min;
+
 	int ntau = 100;
 	int nphi = 100;
 	double htau = (taumax-taumin)/ntau;
 	double hphi = (2*PI)/nphi;
 	Real integral = 0.0;
 	std::ofstream file("check_dtau_dphi.txt");
-	for (int i = 0; i< 10; ++i){
+	for (int i = 0; i< ntau; ++i){
 		double dtau = taumin+(i+0.5)*htau;
-		for (int j=0; j<10;++j){
+		for (int j=0; j<nphi;++j){
 			double dphi=0+(j+0.5)*hphi;
 			KinematicsRad kinrad(kin,dtau,dphi,1.0);//Kinrad(kin,dtau,dphi,1.0_ don't worry, the last number is R, which for exc case, I hard coded Rex, not using this 1.0.
 			Real xs =  EXC_XS_FROM_BASE_P(kinrad, lambda_e, eta);
@@ -1013,7 +1018,7 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 	}
 	file.close();
 	return integral;
-	*/
+	
 }
 
 // Exclusive radiative base functions.
