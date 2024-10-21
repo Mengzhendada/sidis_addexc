@@ -4,6 +4,8 @@
 #include <limits>
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <array>
 
 #include "sidis/bound.hpp"
 #include "sidis/constant.hpp"
@@ -900,36 +902,56 @@ Real xs::EXC_XS_FROM_BASE_P(KinematicsRad kin,Real lambda_e,Vec3& eta)
 //int integrand(unsigned ndim, const double *x, void *data, unsigned fdim, double *fval){
 //	KinematicsRad *kinrad = static_cast<KinematicsRad*>(data);
 //	KinematicsRad kin_temp(*kinrad,x[0],x[1],1.0);
-//	fval[0] = EXC_XS_FROM_BASW_P(kinrad,lambda_e,eta);
+//	fval[0] = EXC_XS_FROM_BASE_P(kin_temp,lambda_e,eta);
 //	return 0;
 //}
 
 Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
-	
-	KinematicsRad kin_rad(kin,1.1,1.0,1.0);
-	double taumin = kin_rad.tau_min;
-	double taumax = kin_rad.tau_max;
-	//double lower[2] = {taumin,0.0};
-	//double upper[2] = {taumax,2*PI};
-	//cubature::EstErr<Real> result = cubature::cubature<2>(
-	//	integrand,
-	//	lower,upper,
-	//	10000,0.0,1e-8,
-	//	&kinrad
-	//	);
-	
+
+	// Define bounds using std::array, but correctly pass them to cubature::Point
+	cubature::Point<2, double> lower = {kin.tau_min, 0.0};
+	cubature::Point<2, double> upper = {kin.tau_max, 2 * PI};
+
+	// Output variables for the integral and error
+	double integral[1] = {0.0};
+	double error[1] = {0.0};
+
+	// Perform the cubature integration with the correct number of arguments
+	cubature::EstErr<Real> result = cubature::cubature<2>(
+		[&](std::array<Real, 2> x) -> Real {
+			KinematicsRad kinrad(kin, x[0], x[1], 1.0);
+			Real xs = EXC_XS_FROM_BASE_P(kinrad, lambda_e, eta);
+			return std::isnan(xs) ? 0.0 : xs;
+		},
+		lower, upper,  // Bounds
+		10000, 1e-8, 1e-6  // Max evaluations and tolerances
+		);
+
+	// Check if the integration was successful
+	if (result.err!=0) {
+		std::cerr << "Cubature failed with error: " << result.err << std::endl;
+		return 0.0;  // Return 0 on failure
+	}
+
+	// Return the computed integral value
+	return integral[0];
+
+	/*	
 	//Get xs for each tau phi bins
 	int ntau = 100;
 	int nphi = 100;
 	double htau = (taumax-taumin)/ntau;
 	double hphi = (2*PI)/nphi;
 	Real integral = 0.0;
+	std::ofstream file("check_dtau_dphi.txt");
 	for (int i = 0; i< 10; ++i){
 		double dtau = taumin+(i+0.5)*htau;
 		for (int j=0; j<10;++j){
 			double dphi=0+(j+0.5)*hphi;
 			KinematicsRad kinrad(kin,dtau,dphi,1.0);//Kinrad(kin,dtau,dphi,1.0_ don't worry, the last number is R, which for exc case, I hard coded Rex, not using this 1.0.
 			Real xs =  EXC_XS_FROM_BASE_P(kinrad, lambda_e, eta);
+			
+			file<<dtau<<" "<<dphi<<" "<<xs<<std::endl;;
 			integral+=xs*dtau*dphi;
 			std::cout<<" check integ j"<<j<<std::endl;
 			std::cout<<" check integ"<<xs<<std::endl;
@@ -938,12 +960,9 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 		}
 		std::cout<<"check integ i "<<i<<std::endl;
 	}
-	//std::cout<<"check exc_integ function, Rex "<<b.Rex<<std::endl;
-
-	//Real xs =  EXC_XS_FROM_BASE_P(kin_rad, lambda_e, eta);
-	//std::cout<<"check exc_integ function, the macro "<<xs<<std::endl;
-        
+	file.close();
 	return integral;
+	*/
 }
 
 // Exclusive radiative base functions.
