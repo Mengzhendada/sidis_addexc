@@ -145,7 +145,7 @@ int main(int argc, char** argv) {
         std::cout<<"thetacm "<<thetacm<<std::endl;
 	std::vector<double> interpolatedValues;
         //interpolatedValues=Get_exc_sf(1.36,0.3,-0.4);
-        interpolatedValues=Get_exc_sf(std::sqrt(kin.W_sq),kin.Q_sq,kin.t);
+        interpolatedValues=Get_exc_sf(std::sqrt(kin.shiftexc_W_sq),kin.shiftexc_Q_sq,kin.shiftexc_t);
 	std::cout<<"check Get_exc_sf interpolatedvalues: "<<std::endl;
 	for(int i = 0;i<interpolatedValues.size();++i){
 		std::cout<<interpolatedValues[i]<<" ";
