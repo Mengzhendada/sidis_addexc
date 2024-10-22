@@ -936,9 +936,42 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 	// Prepare GSL function structure
 	gsl_monte_function func_gsl = {gsl_integrand, D, &func};
 
-	double xl1[D] = {taus-0.1}
+	double xl1[D] = {kin.tau_min,0};
+	double xu1[D] = {taup+(taup-taus)/2,0.2};
+	double xl2[D] = {kin.tau_min,6};
+	double xu2[D] = {taup+(taup-taus)/2,2*PI};
         	
-        */
+	double result1, error1, result2, error2;
+	size_t calls = 10000;
+
+	// Integrate over the first region
+	gsl_monte_vegas_integrate(&func_gsl, xl1, xu1, D, 1000, r, s, &result1, &error1);  // Warm-up
+	gsl_monte_vegas_integrate(&func_gsl, xl1, xu1, D, calls, r, s, &result1, &error1);
+	std::cout << "Integral near (x1, x2): " << result1 << " ± " << error1 << std::endl;
+
+	// Reset the state and integrate over the second region
+	// Reset the state by freeing and reallocating
+	gsl_monte_vegas_free(s);
+	s = gsl_monte_vegas_alloc(D);
+
+	gsl_monte_vegas_integrate(&func_gsl, xl2, xu2, D, 1000, r, s, &result2, &error2);  // Warm-up
+	gsl_monte_vegas_integrate(&func_gsl, xl2, xu2, D, calls, r, s, &result2, &error2);
+	std::cout << "Integral near (x3, x4): " << result2 << " ± " << error2 << std::endl;
+
+	// Combine results from both regions
+	double total_result = result1 + result2;
+	double total_error = std::sqrt(error1 * error1 + error2 * error2);
+
+	std::cout << "Total estimated integral: " << total_result << std::endl;
+	std::cout << "Total estimated error: " << total_error << std::endl;
+
+	// Clean up
+	gsl_monte_vegas_free(s);
+	gsl_rng_free(r);
+
+	return total_result;
+	*/
+	/*
 	constexpr std::size_t D = 2;	
 	auto func = [&](std::array<Real, 2> x) -> Real {
 		KinematicsRad kinrad(kin, x[0], x[1], 1.0);
@@ -1002,7 +1035,8 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 	gsl_rng_free(r);
 
 	return result;
-	/*//Vegas, still taking forever
+	*/
+	//Vegas
 	constexpr std::size_t D = 2;	
 	auto func = [&](std::array<Real, 2> x) -> Real {
 		KinematicsRad kinrad(kin, x[0], x[1], 1.0);
@@ -1019,8 +1053,8 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 	};
 
 	// Define the integration bounds
-	double xl[D] = {kin.tau_min, 0.0};  // Lower bounds
-	double xu[D] = {kin.tau_max, 2 * M_PI};  // Upper bounds
+	double xl[D] = {kin.tau_min, -PI};  // Lower bounds
+	double xu[D] = {kin.tau_max, PI};  // Upper bounds
 
 	// Initialize the VEGAS state
 	gsl_monte_vegas_state* s = gsl_monte_vegas_alloc(D);
@@ -1054,11 +1088,10 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 	gsl_rng_free(r);
 
 	return result;
-	*/
 	/*
 	// Define bounds using std::array, but correctly pass them to cubature::Point
-	cubature::Point<2, double> lower = {kin.tau_min, 0.0};
-	cubature::Point<2, double> upper = {kin.tau_max, 2 * PI};
+	cubature::Point<2, double> lower = {kin.tau_min, -PI};
+	cubature::Point<2, double> upper = {kin.tau_max,  PI};
 
 	// Output variables for the integral and error
 	double integral[1] = {0.0};
@@ -1072,18 +1105,19 @@ Real xs::exc_integ(Kinematics const& kin, Real lambda_e, Vec3 eta) {
 			return std::isnan(xs) ? 0.0 : xs;
 		},
 		lower, upper,  // Bounds
-		10000, 1e-8, 1e-6  // Max evaluations and tolerances
+		10000, 0.0, 0.0  // Max evaluations and tolerances
 		);
 
 	// Check if the integration was successful
-	if (result.err!=0) {
+	if (result.err==0) {
 		std::cerr << "Cubature failed with error: " << result.err << std::endl;
 		return 0.0;  // Return 0 on failure
 	}
 
+	std::cout<<"Check Cubature results "<<integral[0]<<std::endl;
 	// Return the computed integral value
 	return integral[0];
-        */
+	*/
 	/*	
 	//Get xs for each tau phi bins
 	double taumax = kin.tau_max;

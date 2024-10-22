@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
         thetacm=Get_thetacm(std::sqrt(kin.W_sq),kin.Q_sq,kin.t);
         std::cout<<"thetacm "<<thetacm<<std::endl;
 	std::vector<double> interpolatedValues;
-        interpolatedValues=Get_exc_sf(1.36,0.3,-0.4);
+        //interpolatedValues=Get_exc_sf(1.36,0.3,-0.4);
         interpolatedValues=Get_exc_sf(std::sqrt(kin.W_sq),kin.Q_sq,kin.t);
 	std::cout<<"check Get_exc_sf interpolatedvalues: "<<std::endl;
 	for(int i = 0;i<interpolatedValues.size();++i){
@@ -152,7 +152,8 @@ int main(int argc, char** argv) {
 	}
 	std::cout<<std::endl;
         	
-        std::cout<<"check kinrad W "<<std::sqrt(kinrad.W_sq)<<" Q2 "<<kinrad.Q_sq<<" t "<<kinrad.t<<std::endl;
+        std::cout<<"check kinrad W "<<std::sqrt(kinrad.shift_W_sq)<<" Q2 "<<kinrad.shift_Q_sq<<" t "<<kinrad.shift_t<<std::endl;
+        std::cout<<"check kin exc W "<<std::sqrt(kinrad.shiftexc_W_sq)<<" Q2 "<<kinrad.shiftexc_Q_sq<<" t "<<kinrad.shiftexc_t<<std::endl;
 	EXC_SF_F exc_sf_f(kinrad);
         std::cout<<" check exc f1r "<< exc_sf_f.f1r<<std::endl;
         std::cout<<" check exc f3i "<< exc_sf_f.f3i<<std::endl;

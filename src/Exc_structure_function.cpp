@@ -55,7 +55,27 @@ void printDataPoint(DataPoint dp){
     }
     std::cout << std::endl;
 }
-
+std::vector<DataPoint> Read_exc_grid(){
+	//I think I should read the file somewhere else just once
+	std::vector<DataPoint> data;
+	std::ifstream file("src/exc_sf_set/exclu.grid");
+	if(!file.is_open()){
+		std::cout<<"Error opening file."<<std::endl;
+	}
+	std::string line;
+	std::getline(file,line);//Ignore the first row
+	while (std::getline(file,line)){
+		std::istringstream iss(line);
+		DataPoint dp;
+		iss>>dp.Q2>>dp.W>>dp.theta;
+		double val;
+		while (iss >>val){
+			dp.values.push_back(val);//push the rest of the values
+		}
+		data.push_back(dp);
+	}
+	return data;
+}
 // Function to perform trilinear interpolation for a given Q2, W, and theta
 std::vector<double> Get_exc_sf(double W, double Q2, double t) {
   double theta = Get_thetacm(W,Q2,t);
@@ -83,25 +103,8 @@ std::vector<double> Get_exc_sf(double W, double Q2, double t) {
 		Wcorr = 1.0;
 	}
 	
+        static std::vector<DataPoint> data = Read_exc_grid();
 
-	//I think I should read the file somewhere else just once
-	std::vector<DataPoint> data;
-	std::ifstream file("src/exc_sf_set/exclu.grid");
-	if(!file.is_open()){
-		std::cout<<"Error opening file."<<std::endl;
-	}
-	std::string line;
-	std::getline(file,line);//Ignore the first row
-	while (std::getline(file,line)){
-		std::istringstream iss(line);
-		DataPoint dp;
-		iss>>dp.Q2>>dp.W>>dp.theta;
-		double val;
-		while (iss >>val){
-			dp.values.push_back(val);//push the rest of the values
-		}
-		data.push_back(dp);
-	}
 	// This is a simplified trilinear interpolation between the 8 surrounding points
 
 	// Find the 8 surrounding points
