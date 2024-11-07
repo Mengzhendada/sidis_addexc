@@ -258,14 +258,14 @@ std::vector<double> Get_exc_sf(double W, double Q2, double t) {
 	//printDataPoint(upperQ2_upperW_upperTheta); 
 
 	//Just to cross check
-	lowerQ2_lowerW_lowerTheta=lowerQ2_lowerW_lowerTheta; 
-	lowerQ2_upperW_lowerTheta=lowerQ2_lowerW_lowerTheta; 
-	upperQ2_lowerW_lowerTheta=lowerQ2_lowerW_lowerTheta;
-	upperQ2_upperW_lowerTheta=lowerQ2_lowerW_lowerTheta;
-	lowerQ2_lowerW_upperTheta=lowerQ2_lowerW_lowerTheta;
-	lowerQ2_upperW_upperTheta=lowerQ2_lowerW_lowerTheta;
-	upperQ2_lowerW_upperTheta=lowerQ2_lowerW_lowerTheta;
-	upperQ2_upperW_upperTheta=lowerQ2_lowerW_lowerTheta;
+	//lowerQ2_lowerW_lowerTheta=lowerQ2_lowerW_lowerTheta; 
+	//lowerQ2_upperW_lowerTheta=lowerQ2_lowerW_lowerTheta; 
+	//upperQ2_lowerW_lowerTheta=lowerQ2_lowerW_lowerTheta;
+	//upperQ2_upperW_lowerTheta=lowerQ2_lowerW_lowerTheta;
+	//lowerQ2_lowerW_upperTheta=lowerQ2_lowerW_lowerTheta;
+	//lowerQ2_upperW_upperTheta=lowerQ2_lowerW_lowerTheta;
+	//upperQ2_lowerW_upperTheta=lowerQ2_lowerW_lowerTheta;
+	//upperQ2_upperW_upperTheta=lowerQ2_lowerW_lowerTheta;
 
 
 
