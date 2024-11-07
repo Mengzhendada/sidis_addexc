@@ -297,14 +297,15 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 	
 	//Exclusive related quantities
 	m_n= 0.9395612928;
-        Rex= (sq(M)+t+(1-z)*S_x-sq(m_n))/(1+tau-mu);//check this, px is SIDIS px? mu is SIDIS mu? S_x is SIDIS ?
+        Rex  = (sq(M)+sq(mh)-sq(m_n)-Q_sq+(1-z)*S_x-2*V_m)/(1+tau-mu);
+	//Rex= (sq(M)+t+(1-z)*S_x-sq(m_n))/(1+tau-mu);//check this, px is SIDIS px? mu is SIDIS mu? S_x is SIDIS ?
         //shift_Rex= (sq(M)+shift_t+(1-shift_z)*shift_S_x-sq(m_n))/(1+tau-mu);
 	shiftexc_W_sq = W_sq-(1+tau)*Rex;
 	shiftexc_W = sqrt(shiftexc_W_sq);
 	shiftexc_t = t+(mu-tau)*Rex;
 	shiftexc_Q_sq = Q_sq+Rex*tau;
         shiftexc_S_x = S_x-Rex;//need to check this
-        shiftexc_V_m = 1/2*(sq(mh)-shiftexc_Q_sq-shiftexc_t);//check this 
+        shiftexc_V_m = V_m;//1/2*(sq(mh)-shiftexc_Q_sq-shiftexc_t);//check this 
         shiftexc_lambda_Y = sq(shiftexc_S_x)+4*sq(M)*shiftexc_Q_sq;//check this
         shiftexc_lambda_Y_sqrt = sqrt(shiftexc_lambda_Y);
 	//shiftexc_pl = (z*S_x*(S_x-Rex)-2*sq(M)*(2*V_m-mu*Rex))/(2*M*sqrt(shiftexc_lambda_Y));

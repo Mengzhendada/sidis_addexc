@@ -137,15 +137,15 @@ int main(int argc, char** argv) {
 	}
 	// Do kinematics calculations.
 	Kinematics kin(ps, S, ph_space);
-	KinematicsRad kinrad(kin,1.1,1.0,1.0);
+	KinematicsRad kinrad(kin,-0.0313,0.0384499,1.0);
         std::cout<<"check kin W "<<std::sqrt(kin.W_sq)<<" Q2 "<<kin.Q_sq<<" t "<<kin.t<<std::endl;
         double thetacm=0;
-        thetacm=Get_thetacm(1.36,0.3,-0.4);
         thetacm=Get_thetacm(std::sqrt(kin.W_sq),kin.Q_sq,kin.t);
-        std::cout<<"thetacm "<<thetacm<<std::endl;
+        std::cout<<"thetacm not shift "<<thetacm<<std::endl;
 	std::vector<double> interpolatedValues;
-        //interpolatedValues=Get_exc_sf(1.36,0.3,-0.4);
-        interpolatedValues=Get_exc_sf(std::sqrt(kin.shiftexc_W_sq),kin.shiftexc_Q_sq,kin.shiftexc_t);
+	std::cout<<"check S"<<kin.S<<std::endl;
+	//interpolatedValues=Get_exc_sf(1.36,0.3,-0.4);
+        interpolatedValues=Get_exc_sf(std::sqrt(kinrad.shiftexc_W_sq),kinrad.shiftexc_Q_sq,kinrad.shiftexc_t);
 	std::cout<<"check Get_exc_sf interpolatedvalues: "<<std::endl;
 	for(int i = 0;i<interpolatedValues.size();++i){
 		std::cout<<interpolatedValues[i]<<" ";
@@ -154,13 +154,21 @@ int main(int argc, char** argv) {
         	
         std::cout<<"check kinrad W "<<std::sqrt(kinrad.shift_W_sq)<<" Q2 "<<kinrad.shift_Q_sq<<" t "<<kinrad.shift_t<<std::endl;
         std::cout<<"check kin exc W "<<std::sqrt(kinrad.shiftexc_W_sq)<<" Q2 "<<kinrad.shiftexc_Q_sq<<" t "<<kinrad.shiftexc_t<<std::endl;
+	std::cout<<"check kin vm "<<kinrad.V_m<<" rc vm "<<kinrad.shift_V_m<<" exc vm "<<kinrad.shiftexc_V_m<<std::endl;
+	std::cout<<"check kin mu "<<kinrad.mu<<std::endl;
+	std::cout<<"check kin Rex "<<kinrad.Rex<<std::endl;
+	thetacm = Get_thetacm(std::sqrt(kinrad.shiftexc_W_sq),kinrad.shiftexc_Q_sq,kinrad.shiftexc_t);
+	std::cout<<"thetacm shift by exc "<<thetacm<<std::endl;
+	std::cout<<"check kinrad S "<<kinrad.S<<" and X "<<kinrad.X<<std::endl;
+	std::cout<<"check tau1 and tau2 "<<-kinrad.Q_sq/kinrad.S<<" "<<kinrad.Q_sq/kinrad.X<<std::endl;
+	std::cout<<"check r0,r1,r2,r3,r4,r5: "<<kinrad.rex<<" "<<kinrad.r1<<" "<<kinrad.r2<<" "<<kinrad.r3<<" "<<kinrad.r4<<" "<<kinrad.r5<<std::endl;
+	std::cout<<"check exc r0,r1,r2,r3,r4,r5: "<<kinrad.shiftexc_rex<<" "<<kinrad.shiftexc_r1<<" "<<kinrad.shiftexc_r2<<" "<<kinrad.shiftexc_r3<<" "<<kinrad.shiftexc_r4<<" "<<kinrad.shiftexc_r5<<std::endl;
 	EXC_SF_F exc_sf_f(kinrad);
-        std::cout<<" check exc f1r "<< exc_sf_f.f1r<<std::endl;
-        std::cout<<" check exc f3i "<< exc_sf_f.f3i<<std::endl;
-        std::cout<<" check exc f6i "<< exc_sf_f.f6i<<" and f6r "<<exc_sf_f.f6r<<std::endl;
+        std::cout<<" check exc f1r,f1i... "<< exc_sf_f.f1r<<" "<<exc_sf_f.f1i<<" "<<exc_sf_f.f2r<<" "<<exc_sf_f.f2i<<" "<<exc_sf_f.f3r<<" "<<exc_sf_f.f3i<<" "<<exc_sf_f.f4r<<" "<<exc_sf_f.f4i<<" "<<exc_sf_f.f5r<<" "<<exc_sf_f.f5i<<" "<<exc_sf_f.f6r<<" "<<exc_sf_f.f6i<<std::endl;
         //EXC_SF_combine exc_sf_combine(kinrad);//this worked????
         EXC_SF_combine exc_sf_combine(exc_sf_f);
         std::cout<<" check exc f11 "<< exc_sf_combine.f11<<" and f12r "<<exc_sf_combine.f12r<<std::endl;
+        std::cout<<" check exc f22 "<< exc_sf_combine.f22<<" and f23r "<<exc_sf_combine.f23r<<std::endl;
         std::vector<double> A_exc;
         A_exc=Get_exc_sf(std::sqrt(kin.W_sq),kin.Q_sq,kin.t);
         std::cout<<"check A_exc "<<A_exc[0]<<" 1 "<<A_exc[1]<<std::endl;
@@ -174,8 +182,7 @@ int main(int argc, char** argv) {
 	std::cout<<" check H2_000 "<<excuu.H2_000<<std::endl;
 	std::cout<<" check H3_000 "<<excuu.H3_000<<std::endl;
 	std::cout<<" check H4_000 "<<excuu.H4_000<<std::endl;
-	std::cout<<"check tau min "<<kinrad.tau_min<<std::endl;
-	std::cout<<"check tau max "<<kinrad.tau_max<<std::endl;
+	std::cout<<"check tau min "<<kinrad.tau_min<<" check tau max "<<kinrad.tau_max<<" S_X "<<kinrad.S_x<<" lambda "<<kinrad.lambda_Y_sqrt<<std::endl;
 
         LepRadBaseUU lepradbaseuu(kinrad);
 	std::cout<<"check lepton "<<lepradbaseuu.theta_011<<std::endl;

@@ -257,6 +257,18 @@ std::vector<double> Get_exc_sf(double W, double Q2, double t) {
 	//std::cout<<"upperQ2 upperW upperTheta"<<std::endl;
 	//printDataPoint(upperQ2_upperW_upperTheta); 
 
+	//Just to cross check
+	lowerQ2_lowerW_lowerTheta=lowerQ2_lowerW_lowerTheta; 
+	lowerQ2_upperW_lowerTheta=lowerQ2_lowerW_lowerTheta; 
+	upperQ2_lowerW_lowerTheta=lowerQ2_lowerW_lowerTheta;
+	upperQ2_upperW_lowerTheta=lowerQ2_lowerW_lowerTheta;
+	lowerQ2_lowerW_upperTheta=lowerQ2_lowerW_lowerTheta;
+	lowerQ2_upperW_upperTheta=lowerQ2_lowerW_lowerTheta;
+	upperQ2_lowerW_upperTheta=lowerQ2_lowerW_lowerTheta;
+	upperQ2_upperW_upperTheta=lowerQ2_lowerW_lowerTheta;
+
+
+
 	// Interpolate between the 8 corner points
 	std::vector<double> interpolatedValues(12, 0.0);
 
@@ -295,18 +307,6 @@ EXC_A::EXC_A(double W, double Q2, double t){
         A5i = As[9];
         A6r = As[10];
         A6i = As[11];
-	//A1r = Get_exc_sf(W,Q2,t)[0];
-	//A1i = Get_exc_sf(W,Q2,t)[1];
-	//A2r = Get_exc_sf(W,Q2,t)[2];
-	//A2i = Get_exc_sf(W,Q2,t)[3];
-	//A3r = Get_exc_sf(W,Q2,t)[4];
-	//A3i = Get_exc_sf(W,Q2,t)[5];
-	//A4r = Get_exc_sf(W,Q2,t)[6];
-	//A4i = Get_exc_sf(W,Q2,t)[7];
-	//A5r = Get_exc_sf(W,Q2,t)[8];
-	//A5i = Get_exc_sf(W,Q2,t)[9];
-	//A6r = Get_exc_sf(W,Q2,t)[10];
-	//A6i = Get_exc_sf(W,Q2,t)[11];
 
 }
 
@@ -317,18 +317,21 @@ EXC_SF_F::EXC_SF_F(KinematicsRad kin){
   //std::cout<<"in EXC_SF_F shift W: "<<sqrt(kin.shiftexc_W_sq)<<" Q2: "<<kin.shiftexc_Q_sq<<" t: "<<kin.shiftexc_t<<std::endl;
   r1=kin.shiftexc_r1;//sq(sqrt(kin.shiftexc_W_sq)+kin.M)+kin.shiftexc_Q_sq;
   r2=kin.shiftexc_r2;//sq(sqrt(kin.shiftexc_W_sq)-kin.M)+kin.shiftexc_Q_sq;
-  f1r= 1.0/(2*sqrt(2.0*PI*ALPHA))*(excA.A1r+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A4r+(kin.shiftexc_Q_sq*excA.A6r+kin.shiftexc_V_m*(excA.A3r-excA.A4r))/(sqrt(kin.shiftexc_W_sq)-kin.M));
-  f1i= 1.0/(2*sqrt(2.0*PI*ALPHA))*(excA.A1i+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A4i+(kin.shiftexc_Q_sq*excA.A6i+kin.shiftexc_V_m*(excA.A3i-excA.A4i))/(sqrt(kin.shiftexc_W_sq)-kin.M));
-  f2r=1.0/(2*sqrt(2*PI*ALPHA))*(-excA.A1r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A4r+(kin.shiftexc_Q_sq*excA.A6r+kin.shiftexc_V_m*(excA.A3r-excA.A4r))/(sqrt(kin.shiftexc_W_sq)+kin.M));
-  f2i=1.0/(2*sqrt(2*PI*ALPHA))*(-excA.A1i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A4i+(kin.shiftexc_Q_sq*excA.A6i+kin.shiftexc_V_m*(excA.A3i-excA.A4i))/(sqrt(kin.shiftexc_W_sq)+kin.M));
-  f3r=1.0/(2*sqrt(2*PI*ALPHA))*(excA.A3r-excA.A4r+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A2r+(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r))/(2*(sqrt(kin.shiftexc_W_sq)+kin.M)));
-  f3i=1.0/(2*sqrt(2*PI*ALPHA))*(excA.A3i-excA.A4i+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A2i+(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i))/(2*(sqrt(kin.shiftexc_W_sq)+kin.M)));
-  f4r=1.0/(2*sqrt(2*PI*ALPHA))*(excA.A3r-excA.A4r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A2r+(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r))/(2*(sqrt(kin.shiftexc_W_sq)-kin.M)));
-  f4i=1.0/(2*sqrt(2*PI*ALPHA))*(excA.A3i-excA.A4i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A2i+(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i))/(2*(sqrt(kin.shiftexc_W_sq)-kin.M)));
-  f5r=1.0/(8*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA))*((kin.shiftexc_W_sq+sq(kin.mh)-sq(m_n))*(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r)+2*(kin.M+sqrt(kin.shiftexc_W_sq))*((sqrt(kin.shiftexc_W_sq-kin.M)*excA.A2r+excA.A3r-excA.A4r))+4*sqrt(kin.shiftexc_W_sq)*(excA.A4r-2*sqrt(kin.shiftexc_W_sq)*excA.A2r-excA.A3r))-(sq(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)+4*kin.shiftexc_Q_sq*kin.shiftexc_W_sq)*excA.A2r+2*r1*((sqrt(kin.shiftexc_W_sq)-kin.M)*(excA.A4r-excA.A6r)+excA.A1r));
-  f5i=1.0/(8*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA))*((kin.shiftexc_W_sq+sq(kin.mh)-sq(m_n))*(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i)+2*(kin.M+sqrt(kin.shiftexc_W_sq))*((sqrt(kin.shiftexc_W_sq-kin.M)*excA.A2i+excA.A3i-excA.A4i))+4*sqrt(kin.shiftexc_W_sq)*(excA.A4i-2*sqrt(kin.shiftexc_W_sq)*excA.A2i-excA.A3i))-(sq(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)+4*kin.shiftexc_Q_sq*kin.shiftexc_W_sq)*excA.A2i+2*r1*((sqrt(kin.shiftexc_W_sq)-kin.M)*(excA.A4i-excA.A6i)+excA.A1i));
-  f6r=1.0/(8*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA))*(kin.shiftexc_lambda_Y_sqrt*excA.A2r-2*r2*(excA.A1r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A6r)+(kin.shiftexc_W_sq+sq(kin.mh)-m_n*m_n)*(2*kin.shiftexc_Q_sq*excA.A5r+2*(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A3r+2*kin.M*excA.A4r+(2*sq(kin.M)-2*kin.shiftexc_W_sq-kin.shiftexc_Q_sq)*excA.A2r)+2*(kin.M*(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)-sqrt(kin.shiftexc_W_sq)*(sq(kin.M)-sq(m_n)+kin.shiftexc_t))*excA.A4r+kin.shiftexc_V_m*(2*(kin.shiftexc_W_sq-sq(kin.M)-kin.shiftexc_Q_sq)*excA.A5r-4*sqrt(kin.shiftexc_W_sq)*excA.A3r+(3*sq(kin.M)+5*kin.shiftexc_W_sq+3*kin.shiftexc_Q_sq)*excA.A2r));
-  f6i=1.0/(8*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA))*(kin.shiftexc_lambda_Y_sqrt*excA.A2i-2*r2*(excA.A1i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A6i)+(kin.shiftexc_W_sq+sq(kin.mh)-m_n*m_n)*(2*kin.shiftexc_Q_sq*excA.A5i+2*(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A3i+2*kin.M*excA.A4i+(2*sq(kin.M)-2*kin.shiftexc_W_sq-kin.shiftexc_Q_sq)*excA.A2i)+2*(kin.M*(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)-sqrt(kin.shiftexc_W_sq)*(sq(kin.M)-sq(m_n)+kin.shiftexc_t))*excA.A4i+kin.shiftexc_V_m*(2*(kin.shiftexc_W_sq-sq(kin.M)-kin.shiftexc_Q_sq)*excA.A5i-4*sqrt(kin.shiftexc_W_sq)*excA.A3i+(3*sq(kin.M)+5*kin.shiftexc_W_sq+3*kin.shiftexc_Q_sq)*excA.A2i));
+  //There were 1.0/(2*sqrt(2.0*PI*ALPHA))factor in f1~f4 in paper, but not in fortran code, don't know why
+  //There were 1.0/(8*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA)) factor in f5,f6, but not in fortran
+
+  f1r= (excA.A1r+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A4r+(kin.shiftexc_Q_sq*excA.A6r+kin.shiftexc_V_m*(excA.A3r-excA.A4r))/(sqrt(kin.shiftexc_W_sq)-kin.M));
+  f1i= (excA.A1i+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A4i+(kin.shiftexc_Q_sq*excA.A6i+kin.shiftexc_V_m*(excA.A3i-excA.A4i))/(sqrt(kin.shiftexc_W_sq)-kin.M));
+  f2r= (-excA.A1r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A4r+(kin.shiftexc_Q_sq*excA.A6r+kin.shiftexc_V_m*(excA.A3r-excA.A4r))/(sqrt(kin.shiftexc_W_sq)+kin.M));
+  f2i= (-excA.A1i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A4i+(kin.shiftexc_Q_sq*excA.A6i+kin.shiftexc_V_m*(excA.A3i-excA.A4i))/(sqrt(kin.shiftexc_W_sq)+kin.M));
+  f3r= (excA.A3r-excA.A4r+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A2r+(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r))/(2*(sqrt(kin.shiftexc_W_sq)+kin.M)));
+  f3i= (excA.A3i-excA.A4i+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A2i+(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i))/(2*(sqrt(kin.shiftexc_W_sq)+kin.M)));
+  f4r= (excA.A3r-excA.A4r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A2r+(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r))/(2*(sqrt(kin.shiftexc_W_sq)-kin.M)));
+  f4i= (excA.A3i-excA.A4i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A2i+(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i))/(2*(sqrt(kin.shiftexc_W_sq)-kin.M)));
+  f5r= ((kin.shiftexc_W_sq+sq(kin.mh)-sq(m_n))*(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r)+2*(kin.M+sqrt(kin.shiftexc_W_sq))*((sqrt(kin.shiftexc_W_sq-kin.M)*excA.A2r+excA.A3r-excA.A4r))+4*sqrt(kin.shiftexc_W_sq)*(excA.A4r-2*sqrt(kin.shiftexc_W_sq)*excA.A2r-excA.A3r))-(sq(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)+4*kin.shiftexc_Q_sq*kin.shiftexc_W_sq)*excA.A2r+2*r1*((sqrt(kin.shiftexc_W_sq)-kin.M)*(excA.A4r-excA.A6r)+excA.A1r));
+  f5i= ((kin.shiftexc_W_sq+sq(kin.mh)-sq(m_n))*(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i)+2*(kin.M+sqrt(kin.shiftexc_W_sq))*((sqrt(kin.shiftexc_W_sq-kin.M)*excA.A2i+excA.A3i-excA.A4i))+4*sqrt(kin.shiftexc_W_sq)*(excA.A4i-2*sqrt(kin.shiftexc_W_sq)*excA.A2i-excA.A3i))-(sq(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)+4*kin.shiftexc_Q_sq*kin.shiftexc_W_sq)*excA.A2i+2*r1*((sqrt(kin.shiftexc_W_sq)-kin.M)*(excA.A4i-excA.A6i)+excA.A1i));
+  f6r= (kin.shiftexc_lambda_Y_sqrt*excA.A2r-2*r2*(excA.A1r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A6r)+(kin.shiftexc_W_sq+sq(kin.mh)-m_n*m_n)*(2*kin.shiftexc_Q_sq*excA.A5r+2*(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A3r+2*kin.M*excA.A4r+(2*sq(kin.M)-2*kin.shiftexc_W_sq-kin.shiftexc_Q_sq)*excA.A2r)+2*(kin.M*(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)-sqrt(kin.shiftexc_W_sq)*(sq(kin.M)-sq(m_n)+kin.shiftexc_t))*excA.A4r+kin.shiftexc_V_m*(2*(kin.shiftexc_W_sq-sq(kin.M)-kin.shiftexc_Q_sq)*excA.A5r-4*sqrt(kin.shiftexc_W_sq)*excA.A3r+(3*sq(kin.M)+5*kin.shiftexc_W_sq+3*kin.shiftexc_Q_sq)*excA.A2r));
+  f6i= (kin.shiftexc_lambda_Y_sqrt*excA.A2i-2*r2*(excA.A1i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A6i)+(kin.shiftexc_W_sq+sq(kin.mh)-m_n*m_n)*(2*kin.shiftexc_Q_sq*excA.A5i+2*(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A3i+2*kin.M*excA.A4i+(2*sq(kin.M)-2*kin.shiftexc_W_sq-kin.shiftexc_Q_sq)*excA.A2i)+2*(kin.M*(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)-sqrt(kin.shiftexc_W_sq)*(sq(kin.M)-sq(m_n)+kin.shiftexc_t))*excA.A4i+kin.shiftexc_V_m*(2*(kin.shiftexc_W_sq-sq(kin.M)-kin.shiftexc_Q_sq)*excA.A5i-4*sqrt(kin.shiftexc_W_sq)*excA.A3i+(3*sq(kin.M)+5*kin.shiftexc_W_sq+3*kin.shiftexc_Q_sq)*excA.A2i));
 }
 
 EXC_SF_combine::EXC_SF_combine(EXC_SF_F exc_sf_f){
