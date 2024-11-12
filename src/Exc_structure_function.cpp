@@ -317,61 +317,62 @@ EXC_SF_F::EXC_SF_F(KinematicsRad kin){
   //std::cout<<"in EXC_SF_F shift W: "<<sqrt(kin.shiftexc_W_sq)<<" Q2: "<<kin.shiftexc_Q_sq<<" t: "<<kin.shiftexc_t<<std::endl;
   r1=kin.shiftexc_r1;//sq(sqrt(kin.shiftexc_W_sq)+kin.M)+kin.shiftexc_Q_sq;
   r2=kin.shiftexc_r2;//sq(sqrt(kin.shiftexc_W_sq)-kin.M)+kin.shiftexc_Q_sq;
-  //There were 1.0/(2*sqrt(2.0*PI*ALPHA))factor in f1~f4 in paper, but not in fortran code, don't know why
-  //There were 1.0/(8*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA)) factor in f5,f6, but not in fortran
+  //There were 1.0/(2*sqrt(2.0*PI*ALPHA))factor in f1~f4 in paper, but not in fortran code, it's applied later
+  //There were 1.0/(8*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA)) factor in f5,f6, but not in fortran, it's applied later
 
-  f1r= (excA.A1r+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A4r+(kin.shiftexc_Q_sq*excA.A6r+kin.shiftexc_V_m*(excA.A3r-excA.A4r))/(sqrt(kin.shiftexc_W_sq)-kin.M));
-  f1i= (excA.A1i+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A4i+(kin.shiftexc_Q_sq*excA.A6i+kin.shiftexc_V_m*(excA.A3i-excA.A4i))/(sqrt(kin.shiftexc_W_sq)-kin.M));
-  f2r= (-excA.A1r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A4r+(kin.shiftexc_Q_sq*excA.A6r+kin.shiftexc_V_m*(excA.A3r-excA.A4r))/(sqrt(kin.shiftexc_W_sq)+kin.M));
-  f2i= (-excA.A1i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A4i+(kin.shiftexc_Q_sq*excA.A6i+kin.shiftexc_V_m*(excA.A3i-excA.A4i))/(sqrt(kin.shiftexc_W_sq)+kin.M));
-  f3r= (excA.A3r-excA.A4r+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A2r+(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r))/(2*(sqrt(kin.shiftexc_W_sq)+kin.M)));
-  f3i= (excA.A3i-excA.A4i+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A2i+(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i))/(2*(sqrt(kin.shiftexc_W_sq)+kin.M)));
-  f4r= (excA.A3r-excA.A4r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A2r+(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r))/(2*(sqrt(kin.shiftexc_W_sq)-kin.M)));
-  f4i= (excA.A3i-excA.A4i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A2i+(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i))/(2*(sqrt(kin.shiftexc_W_sq)-kin.M)));
-  f5r= ((kin.shiftexc_W_sq+sq(kin.mh)-sq(m_n))*(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r)+2*(kin.M+sqrt(kin.shiftexc_W_sq))*((sqrt(kin.shiftexc_W_sq-kin.M)*excA.A2r+excA.A3r-excA.A4r))+4*sqrt(kin.shiftexc_W_sq)*(excA.A4r-2*sqrt(kin.shiftexc_W_sq)*excA.A2r-excA.A3r))-(sq(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)+4*kin.shiftexc_Q_sq*kin.shiftexc_W_sq)*excA.A2r+2*r1*((sqrt(kin.shiftexc_W_sq)-kin.M)*(excA.A4r-excA.A6r)+excA.A1r));
-  f5i= ((kin.shiftexc_W_sq+sq(kin.mh)-sq(m_n))*(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i)+2*(kin.M+sqrt(kin.shiftexc_W_sq))*((sqrt(kin.shiftexc_W_sq-kin.M)*excA.A2i+excA.A3i-excA.A4i))+4*sqrt(kin.shiftexc_W_sq)*(excA.A4i-2*sqrt(kin.shiftexc_W_sq)*excA.A2i-excA.A3i))-(sq(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)+4*kin.shiftexc_Q_sq*kin.shiftexc_W_sq)*excA.A2i+2*r1*((sqrt(kin.shiftexc_W_sq)-kin.M)*(excA.A4i-excA.A6i)+excA.A1i));
-  f6r= (kin.shiftexc_lambda_Y_sqrt*excA.A2r-2*r2*(excA.A1r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A6r)+(kin.shiftexc_W_sq+sq(kin.mh)-m_n*m_n)*(2*kin.shiftexc_Q_sq*excA.A5r+2*(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A3r+2*kin.M*excA.A4r+(2*sq(kin.M)-2*kin.shiftexc_W_sq-kin.shiftexc_Q_sq)*excA.A2r)+2*(kin.M*(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)-sqrt(kin.shiftexc_W_sq)*(sq(kin.M)-sq(m_n)+kin.shiftexc_t))*excA.A4r+kin.shiftexc_V_m*(2*(kin.shiftexc_W_sq-sq(kin.M)-kin.shiftexc_Q_sq)*excA.A5r-4*sqrt(kin.shiftexc_W_sq)*excA.A3r+(3*sq(kin.M)+5*kin.shiftexc_W_sq+3*kin.shiftexc_Q_sq)*excA.A2r));
-  f6i= (kin.shiftexc_lambda_Y_sqrt*excA.A2i-2*r2*(excA.A1i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A6i)+(kin.shiftexc_W_sq+sq(kin.mh)-m_n*m_n)*(2*kin.shiftexc_Q_sq*excA.A5i+2*(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A3i+2*kin.M*excA.A4i+(2*sq(kin.M)-2*kin.shiftexc_W_sq-kin.shiftexc_Q_sq)*excA.A2i)+2*(kin.M*(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)-sqrt(kin.shiftexc_W_sq)*(sq(kin.M)-sq(m_n)+kin.shiftexc_t))*excA.A4i+kin.shiftexc_V_m*(2*(kin.shiftexc_W_sq-sq(kin.M)-kin.shiftexc_Q_sq)*excA.A5i-4*sqrt(kin.shiftexc_W_sq)*excA.A3i+(3*sq(kin.M)+5*kin.shiftexc_W_sq+3*kin.shiftexc_Q_sq)*excA.A2i));
+
+  f1r= 1.0/(2*sqrt(2.0*PI*ALPHA))*(excA.A1r+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A4r+(kin.shiftexc_Q_sq*excA.A6r+kin.shiftexc_V_m*(excA.A3r-excA.A4r))/(sqrt(kin.shiftexc_W_sq)-kin.M));
+  f1i= 1.0/(2*sqrt(2.0*PI*ALPHA))*(excA.A1i+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A4i+(kin.shiftexc_Q_sq*excA.A6i+kin.shiftexc_V_m*(excA.A3i-excA.A4i))/(sqrt(kin.shiftexc_W_sq)-kin.M));
+  f2r= 1.0/(2*sqrt(2.0*PI*ALPHA))*(-excA.A1r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A4r+(kin.shiftexc_Q_sq*excA.A6r+kin.shiftexc_V_m*(excA.A3r-excA.A4r))/(sqrt(kin.shiftexc_W_sq)+kin.M));
+  f2i= 1.0/(2*sqrt(2.0*PI*ALPHA))*(-excA.A1i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A4i+(kin.shiftexc_Q_sq*excA.A6i+kin.shiftexc_V_m*(excA.A3i-excA.A4i))/(sqrt(kin.shiftexc_W_sq)+kin.M));
+  f3r= 1.0/(2*sqrt(2.0*PI*ALPHA))*(excA.A3r-excA.A4r+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A2r+(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r))/(2*(sqrt(kin.shiftexc_W_sq)+kin.M)));
+  f3i= 1.0/(2*sqrt(2.0*PI*ALPHA))*(excA.A3i-excA.A4i+(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A2i+(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i))/(2*(sqrt(kin.shiftexc_W_sq)+kin.M)));
+  f4r= 1.0/(2*sqrt(2.0*PI*ALPHA))*(excA.A3r-excA.A4r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A2r-(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r))/(2*(sqrt(kin.shiftexc_W_sq)-kin.M)));
+  f4i= 1.0/(2*sqrt(2.0*PI*ALPHA))*(excA.A3i-excA.A4i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A2i-(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i))/(2*(sqrt(kin.shiftexc_W_sq)-kin.M)));
+  f5r= 1/(8.0*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA))*((kin.shiftexc_W_sq+sq(kin.mh)-sq(m_n))*(kin.shiftexc_Q_sq*(excA.A2r-2*excA.A5r)+2*(kin.M+sqrt(kin.shiftexc_W_sq))*(sqrt(kin.shiftexc_W_sq-kin.M)*excA.A2r+excA.A3r-excA.A4r))+kin.shiftexc_V_m*((sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)*(2*excA.A5r-3*excA.A2r)+4*sqrt(kin.shiftexc_W_sq)*(excA.A4r-2*sqrt(kin.shiftexc_W_sq)*excA.A2r-excA.A3r)-(sq(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)+4*kin.shiftexc_Q_sq*kin.shiftexc_W_sq)*excA.A2r+2*r1*((sqrt(kin.shiftexc_W_sq)-kin.M)*(excA.A4r-excA.A6r)+excA.A1r));
+  f5i= 1/(8.0*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA))*((kin.shiftexc_W_sq+sq(kin.mh)-sq(m_n))*(kin.shiftexc_Q_sq*(excA.A2i-2*excA.A5i)+2*(kin.M+sqrt(kin.shiftexc_W_sq))*(sqrt(kin.shiftexc_W_sq-kin.M)*excA.A2i+excA.A3i-excA.A4i))+kin.shiftexc_V_m*((sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)*(2*excA.A5i-3*excA.A2i)+4*sqrt(kin.shiftexc_W_sq)*(excA.A4i-2*sqrt(kin.shiftexc_W_sq)*excA.A2i-excA.A3i)+4*sqrt(kin.shiftexc_W_sq)*(excA.A4i-2*sqrt(kin.shiftexc_W_sq)*excA.A2i-excA.A3i))-(sq(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)+4*kin.shiftexc_Q_sq*kin.shiftexc_W_sq)*excA.A2i+2*r1*((sqrt(kin.shiftexc_W_sq)-kin.M)*(excA.A4i-excA.A6i)+excA.A1i));
+  f6r= 1/(8.0*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA))*(kin.shiftexc_lambda_Y_sqrt*excA.A2r-2*r2*(excA.A1r+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A6r)+(kin.shiftexc_W_sq+sq(kin.mh)-m_n*m_n)*(2*kin.shiftexc_Q_sq*excA.A5r+2*(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A3r+2*kin.M*excA.A4r+(2*sq(kin.M)-2*kin.shiftexc_W_sq-kin.shiftexc_Q_sq)*excA.A2r)+2*(kin.M*(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)-sqrt(kin.shiftexc_W_sq)*(sq(kin.M)-sq(m_n)+kin.shiftexc_t))*excA.A4r+kin.shiftexc_V_m*(2*(kin.shiftexc_W_sq-sq(kin.M)-kin.shiftexc_Q_sq)*excA.A5r-4*sqrt(kin.shiftexc_W_sq)*excA.A3r+(3*sq(kin.M)+5*kin.shiftexc_W_sq+3*kin.shiftexc_Q_sq)*excA.A2r));
+  f6i= 1/(8.0*sqrt(kin.shiftexc_W_sq)*sqrt(2*PI*ALPHA))*(kin.shiftexc_lambda_Y_sqrt*excA.A2i-2*r2*(excA.A1i+(sqrt(kin.shiftexc_W_sq)+kin.M)*excA.A6i)+(kin.shiftexc_W_sq+sq(kin.mh)-m_n*m_n)*(2*kin.shiftexc_Q_sq*excA.A5i+2*(sqrt(kin.shiftexc_W_sq)-kin.M)*excA.A3i+2*kin.M*excA.A4i+(2*sq(kin.M)-2*kin.shiftexc_W_sq-kin.shiftexc_Q_sq)*excA.A2i)+2*(kin.M*(sq(kin.M)+kin.shiftexc_Q_sq-kin.shiftexc_W_sq)-sqrt(kin.shiftexc_W_sq)*(sq(kin.M)-sq(m_n)+kin.shiftexc_t))*excA.A4i+kin.shiftexc_V_m*(2*(kin.shiftexc_W_sq-sq(kin.M)-kin.shiftexc_Q_sq)*excA.A5i-4*sqrt(kin.shiftexc_W_sq)*excA.A3i+(3*sq(kin.M)+5*kin.shiftexc_W_sq+3*kin.shiftexc_Q_sq)*excA.A2i));
 }
 
 EXC_SF_combine::EXC_SF_combine(EXC_SF_F exc_sf_f){
   //C.22
-  f11=sq(exc_sf_f.f1r)+sq(exc_sf_f.f1i);
-  f12r=exc_sf_f.f1r*exc_sf_f.f2r+exc_sf_f.f1i*exc_sf_f.f2i;
-  f12i=exc_sf_f.f1r*exc_sf_f.f2r-exc_sf_f.f1i*exc_sf_f.f2i;
-  f13r=exc_sf_f.f1r*exc_sf_f.f3r+exc_sf_f.f1i*exc_sf_f.f3i;
-  f13i=exc_sf_f.f1r*exc_sf_f.f3r-exc_sf_f.f1i*exc_sf_f.f3i;
-  f14r=exc_sf_f.f1r*exc_sf_f.f4r+exc_sf_f.f1i*exc_sf_f.f4i;
-  f14i=exc_sf_f.f1r*exc_sf_f.f4r-exc_sf_f.f1i*exc_sf_f.f4i;
-  f15r=exc_sf_f.f1r*exc_sf_f.f5r+exc_sf_f.f1i*exc_sf_f.f5i;
-  f15i=exc_sf_f.f1r*exc_sf_f.f5r-exc_sf_f.f1i*exc_sf_f.f5i;
-  f16r=exc_sf_f.f1r*exc_sf_f.f6r+exc_sf_f.f1i*exc_sf_f.f6i;
-  f16i=exc_sf_f.f1r*exc_sf_f.f6r-exc_sf_f.f1i*exc_sf_f.f6i;
-  f22=sq(exc_sf_f.f2r)+sq(exc_sf_f.f2i);
-  f23r=exc_sf_f.f2r*exc_sf_f.f3r+exc_sf_f.f2i*exc_sf_f.f3i;
-  f23i=exc_sf_f.f2r*exc_sf_f.f3r-exc_sf_f.f2i*exc_sf_f.f3i;
-  f24r=exc_sf_f.f2r*exc_sf_f.f4r+exc_sf_f.f2i*exc_sf_f.f4i;
-  f24i=exc_sf_f.f2r*exc_sf_f.f4r-exc_sf_f.f2i*exc_sf_f.f4i;
-  f25r=exc_sf_f.f2r*exc_sf_f.f5r+exc_sf_f.f2i*exc_sf_f.f5i;
-  f25i=exc_sf_f.f2r*exc_sf_f.f5r-exc_sf_f.f2i*exc_sf_f.f5i;
-  f26r=exc_sf_f.f2r*exc_sf_f.f6r+exc_sf_f.f2i*exc_sf_f.f6i;
-  f26i=exc_sf_f.f2r*exc_sf_f.f6r-exc_sf_f.f2i*exc_sf_f.f6i;
-  f33=sq(exc_sf_f.f3r)+sq(exc_sf_f.f3i);
-  f34r=exc_sf_f.f3r*exc_sf_f.f4r+exc_sf_f.f3i*exc_sf_f.f4i;
-  f34i=exc_sf_f.f3r*exc_sf_f.f4r-exc_sf_f.f3i*exc_sf_f.f4i;
-  f35r=exc_sf_f.f3r*exc_sf_f.f5r+exc_sf_f.f3i*exc_sf_f.f5i;
-  f35i=exc_sf_f.f3r*exc_sf_f.f5r-exc_sf_f.f3i*exc_sf_f.f5i;
-  f36r=exc_sf_f.f3r*exc_sf_f.f6r+exc_sf_f.f3i*exc_sf_f.f6i;
-  f36i=exc_sf_f.f3r*exc_sf_f.f6r-exc_sf_f.f3i*exc_sf_f.f6i;
-  f44=sq(exc_sf_f.f4r)+sq(exc_sf_f.f4i);
-  f45r=exc_sf_f.f4r*exc_sf_f.f5r+exc_sf_f.f4i*exc_sf_f.f5i;
-  f45i=exc_sf_f.f4r*exc_sf_f.f5r-exc_sf_f.f4i*exc_sf_f.f5i;
-  f46r=exc_sf_f.f4r*exc_sf_f.f6r+exc_sf_f.f4i*exc_sf_f.f6i;
-  f46i=exc_sf_f.f4r*exc_sf_f.f6r-exc_sf_f.f4i*exc_sf_f.f6i;
-  f55=sq(exc_sf_f.f5r)+sq(exc_sf_f.f5i);
-  f56r=exc_sf_f.f5r*exc_sf_f.f6r+exc_sf_f.f5i*exc_sf_f.f6i;
-  f56i=exc_sf_f.f5r*exc_sf_f.f6r-exc_sf_f.f5i*exc_sf_f.f6i;
-  f66=sq(exc_sf_f.f6r)+sq(exc_sf_f.f6i);
+	f11=sq(exc_sf_f.f1r)+sq(exc_sf_f.f1i);
+	f12r=exc_sf_f.f1r*exc_sf_f.f2r+exc_sf_f.f1i*exc_sf_f.f2i;
+	f12i=exc_sf_f.f1i*exc_sf_f.f2r-exc_sf_f.f1r*exc_sf_f.f2i;
+	f13r=exc_sf_f.f1r*exc_sf_f.f3r+exc_sf_f.f1i*exc_sf_f.f3i;
+	f13i=exc_sf_f.f1i*exc_sf_f.f3r-exc_sf_f.f1r*exc_sf_f.f3i;
+	f14r=exc_sf_f.f1r*exc_sf_f.f4r+exc_sf_f.f1i*exc_sf_f.f4i;
+	f14i=exc_sf_f.f1i*exc_sf_f.f4r-exc_sf_f.f1r*exc_sf_f.f4i;
+	f15r=exc_sf_f.f1r*exc_sf_f.f5r+exc_sf_f.f1i*exc_sf_f.f5i;
+	f15i=exc_sf_f.f1i*exc_sf_f.f5r-exc_sf_f.f1r*exc_sf_f.f5i;
+	f16r=exc_sf_f.f1r*exc_sf_f.f6r+exc_sf_f.f1i*exc_sf_f.f6i;
+	f16i=exc_sf_f.f1i*exc_sf_f.f6r-exc_sf_f.f1r*exc_sf_f.f6i;
+	f22=sq(exc_sf_f.f2r)+sq(exc_sf_f.f2i);
+	f23r=exc_sf_f.f2r*exc_sf_f.f3r+exc_sf_f.f2i*exc_sf_f.f3i;
+	f23i=exc_sf_f.f2i*exc_sf_f.f3r-exc_sf_f.f2r*exc_sf_f.f3i;
+	f24r=exc_sf_f.f2r*exc_sf_f.f4r+exc_sf_f.f2i*exc_sf_f.f4i;
+	f24i=exc_sf_f.f2i*exc_sf_f.f4r-exc_sf_f.f2r*exc_sf_f.f4i;
+	f25r=exc_sf_f.f2r*exc_sf_f.f5r+exc_sf_f.f2i*exc_sf_f.f5i;
+	f25i=exc_sf_f.f2i*exc_sf_f.f5r-exc_sf_f.f2r*exc_sf_f.f5i;
+	f26r=exc_sf_f.f2r*exc_sf_f.f6r+exc_sf_f.f2i*exc_sf_f.f6i;
+	f26i=exc_sf_f.f2i*exc_sf_f.f6r-exc_sf_f.f2r*exc_sf_f.f6i;
+	f33=sq(exc_sf_f.f3r)+sq(exc_sf_f.f3i);
+	f34r=exc_sf_f.f3r*exc_sf_f.f4r+exc_sf_f.f3i*exc_sf_f.f4i;
+	f34i=exc_sf_f.f3i*exc_sf_f.f4r-exc_sf_f.f3r*exc_sf_f.f4i;
+	f35r=exc_sf_f.f3r*exc_sf_f.f5r+exc_sf_f.f3i*exc_sf_f.f5i;
+	f35i=exc_sf_f.f3i*exc_sf_f.f5r-exc_sf_f.f3r*exc_sf_f.f5i;
+	f36r=exc_sf_f.f3r*exc_sf_f.f6r+exc_sf_f.f3i*exc_sf_f.f6i;
+	f36i=exc_sf_f.f3i*exc_sf_f.f6r-exc_sf_f.f3r*exc_sf_f.f6i;
+	f44=sq(exc_sf_f.f4r)+sq(exc_sf_f.f4i);
+	f45r=exc_sf_f.f4r*exc_sf_f.f5r+exc_sf_f.f4i*exc_sf_f.f5i;
+	f45i=exc_sf_f.f4i*exc_sf_f.f5r-exc_sf_f.f4r*exc_sf_f.f5i;
+	f46r=exc_sf_f.f4r*exc_sf_f.f6r+exc_sf_f.f4i*exc_sf_f.f6i;
+	f46i=exc_sf_f.f4i*exc_sf_f.f6r-exc_sf_f.f4r*exc_sf_f.f6i;
+	f55=sq(exc_sf_f.f5r)+sq(exc_sf_f.f5i);
+	f56r=exc_sf_f.f5r*exc_sf_f.f6r+exc_sf_f.f5i*exc_sf_f.f6i;
+	f56i=exc_sf_f.f5i*exc_sf_f.f6r-exc_sf_f.f5r*exc_sf_f.f6i;
+	f66=sq(exc_sf_f.f6r)+sq(exc_sf_f.f6i);
 }
 
 EXC_SF::EXC_SF(EXC_SF_combine exc_SF_com,KinematicsRad kin){
