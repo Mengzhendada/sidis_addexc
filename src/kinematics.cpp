@@ -305,7 +305,7 @@ KinematicsRad::KinematicsRad(Kinematics const& kin, Real tau, Real phi_k, Real R
 	shiftexc_t = t+(mu-tau)*Rex;
 	shiftexc_Q_sq = Q_sq+Rex*tau;
         shiftexc_S_x = S_x-Rex;//need to check this
-        shiftexc_V_m = V_m;//1/2*(sq(mh)-shiftexc_Q_sq-shiftexc_t);//check this 
+        shiftexc_V_m = V_m-mu*Rex;//1/2*(sq(mh)-shiftexc_Q_sq-shiftexc_t);//check this 
         shiftexc_lambda_Y = sq(shiftexc_S_x)+4*sq(M)*shiftexc_Q_sq;//check this
         shiftexc_lambda_Y_sqrt = sqrt(shiftexc_lambda_Y);
 	//shiftexc_pl = (z*S_x*(S_x-Rex)-2*sq(M)*(2*V_m-mu*Rex))/(2*M*sqrt(shiftexc_lambda_Y));

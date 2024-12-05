@@ -272,7 +272,7 @@ std::vector<double> Get_exc_sf(double W, double Q2, double t) {
 	// Interpolate between the 8 corner points
 	std::vector<double> interpolatedValues(12, 0.0);
 
-	for (size_t i = 0; i < 12; ++i) {
+	for (size_t i = 0; i < 36; ++i) {
 		// Interpolate along the theta axis
 		double lowerQ2_lowerW = linearInterpolate(lowerQ2_lowerW_lowerTheta.theta, lowerQ2_lowerW_upperTheta.theta, lowerQ2_lowerW_lowerTheta.values[i], lowerQ2_lowerW_upperTheta.values[i], theta);
 		//std::cout<<"check each 1D"<< lowerQ2_lowerW<<" x0 "<<lowerQ2_lowerW_lowerTheta.theta<<" x1 "<< lowerQ2_lowerW_upperTheta.theta<<" y0 "<< lowerQ2_lowerW_lowerTheta.values[i]<<" y1 "<< lowerQ2_lowerW_upperTheta.values[i]<<" theta "<< theta<<std::endl;
@@ -384,7 +384,7 @@ EXC_SF::EXC_SF(EXC_SF_combine exc_SF_com,KinematicsRad kin){
   H00pH22_000= 
   (1 / kin.shiftexc_W_sq) * (
     2 * kin.shiftexc_Q_sq * kin.shiftexc_W_sq * ( (r3 / r1) * exc_SF_com.f55 + (r4 / r2) * exc_SF_com.f66 ) +
-    (r5 / (r1 * r2)) * ( (kin.shiftexc_W_sq - sq(kin.M)) * kin.shiftexc_lambda_Y_sqrt * exc_SF_com.f12r - 4 * kin.shiftexc_Q_sq * kin.shiftexc_W_sq * exc_SF_com.f56r ) +0.5 * (
+    (r5 / (r1 * r2)) * ( (kin.shiftexc_W_sq - sq(kin.M)) * kin.shiftexc_lambda_Y * exc_SF_com.f12r - 4 * kin.shiftexc_Q_sq * kin.shiftexc_W_sq * exc_SF_com.f56r ) +0.5 * (
       sq(sqrt(kin.shiftexc_W_sq) - kin.M) * r1 * r3 * exc_SF_com.f11 +
       sq(sqrt(kin.shiftexc_W_sq) + kin.M) * r2 * r4 * exc_SF_com.f22)
     );
@@ -399,8 +399,8 @@ EXC_SF::EXC_SF(EXC_SF_combine exc_SF_com,KinematicsRad kin){
   H01i_000=(sqrt(kin.shiftexc_Q_sq) * kin.shiftexc_ph_t / (sqrt(kin.shiftexc_W_sq) * kin.shiftexc_lambda_Y_sqrt)) * (
     (sqrt(kin.shiftexc_W_sq) - kin.M) * (r5 * exc_SF_com.f45i - r1 * (2 * sqrt(kin.shiftexc_W_sq) * exc_SF_com.f16i) + r4 * exc_SF_com.f46i) +
     (sqrt(kin.shiftexc_W_sq) + kin.M) * (r5 * exc_SF_com.f36i - r2 * (2 * sqrt(kin.shiftexc_W_sq) * exc_SF_com.f25i + r3 * exc_SF_com.f35i)));
-  H00pH22_010 = (2  * kin.shiftexc_ph_t / (sqrt(kin.shiftexc_W_sq) * kin.shiftexc_lambda_Y_sqrt)) * ((kin.shiftexc_W_sq - sq(kin.M)) * kin.shiftexc_lambda_Y_sqrt * exc_SF_com.f12i + 4 * kin.shiftexc_Q_sq * kin.shiftexc_W_sq * exc_SF_com.f56i);
-  H11mH22opt2_010= (1. / (kin.shiftexc_W_sq * sq(kin.shiftexc_ph_t) * kin.shiftexc_lambda_Y_sqrt)) * (r5 * (sq(sqrt(kin.shiftexc_W_sq) - kin.M) * r1 * exc_SF_com.f14i - sq(sqrt(kin.shiftexc_W_sq) + kin.M) * r2 * exc_SF_com.f23i) + (kin.shiftexc_W_sq - sq(kin.M)) * kin.shiftexc_lambda_Y_sqrt * (r4 * exc_SF_com.f24i + 2 * sqrt(kin.shiftexc_W_sq) * (sq(kin.shiftexc_ph_t) * exc_SF_com.f34i - 2 * exc_SF_com.f12i)) - r3 * exc_SF_com.f13i);
+  H00pH22_010 = (2  * kin.shiftexc_ph_t / (sqrt(kin.shiftexc_W_sq) * kin.shiftexc_lambda_Y_sqrt)) * ((kin.shiftexc_W_sq - sq(kin.M)) * kin.shiftexc_lambda_Y * exc_SF_com.f12i + 4 * kin.shiftexc_Q_sq * kin.shiftexc_W_sq * exc_SF_com.f56i);
+  H11mH22opt2_010= (1. / (kin.shiftexc_W_sq * (kin.shiftexc_ph_t) * kin.shiftexc_lambda_Y_sqrt)) * (r5 * (sq(sqrt(kin.shiftexc_W_sq) - kin.M) * r1 * exc_SF_com.f14i - sq(sqrt(kin.shiftexc_W_sq) + kin.M) * r2 * exc_SF_com.f23i) + (kin.shiftexc_W_sq - sq(kin.M)) * kin.shiftexc_lambda_Y * (r4 * exc_SF_com.f24i + 2 * sqrt(kin.shiftexc_W_sq) * (sq(kin.shiftexc_ph_t) * exc_SF_com.f34i - 2 * exc_SF_com.f12i) - r3 * exc_SF_com.f13i));
   H22_010=(2 * kin.shiftexc_ph_t * kin.shiftexc_lambda_Y_sqrt / sqrt(kin.shiftexc_W_sq)) *(kin.shiftexc_W_sq - sq(kin.M)) * exc_SF_com.f12i;  
   H01r_010=(sqrt(kin.shiftexc_Q_sq) / (r1 * r2 * sqrt(kin.shiftexc_W_sq))) * (
     (sqrt(kin.shiftexc_W_sq) - kin.M) * (r1 * r5 * exc_SF_com.f16i - kin.shiftexc_lambda_Y * (r3 * exc_SF_com.f15i + 2 * sqrt(kin.shiftexc_W_sq) * sq(kin.shiftexc_ph_t) * exc_SF_com.f45i)) +
@@ -414,7 +414,7 @@ EXC_SF::EXC_SF(EXC_SF_combine exc_SF_com,KinematicsRad kin){
     );
   H02i_100=(sqrt(kin.shiftexc_Q_sq) / (r1 * r2 * sqrt(kin.shiftexc_W_sq))) * (
     (sqrt(kin.shiftexc_W_sq) - kin.M) * (r3 * kin.shiftexc_lambda_Y * exc_SF_com.f15r - r1 * r5 * exc_SF_com.f16r) +   (sqrt(kin.shiftexc_W_sq) + kin.M) * (r2 * (r5 * exc_SF_com.f25r - r1 * r4 * exc_SF_com.f26r)));
-  H12r_100=(kin.shiftexc_ph_t  / (2 * sq(kin.shiftexc_W_sq) * kin.shiftexc_lambda_Y_sqrt)) * (
+  H12r_100=(kin.shiftexc_ph_t  / (2 * kin.shiftexc_W_sq * kin.shiftexc_lambda_Y_sqrt)) * (
     (kin.shiftexc_W_sq - sq(kin.M)) * (r1 * r2 * (4 * sqrt(kin.shiftexc_W_sq) * exc_SF_com.f12i - r4 * exc_SF_com.f24i) + r3 * kin.shiftexc_lambda_Y * exc_SF_com.f13i) +
     r5 * (sq(sqrt(kin.shiftexc_W_sq) + kin.M) * r2 * exc_SF_com.f23i - sq(sqrt(kin.shiftexc_W_sq) - kin.M) * r1 * exc_SF_com.f14i)
     );
@@ -431,7 +431,7 @@ EXC_SF::EXC_SF(EXC_SF_combine exc_SF_com,KinematicsRad kin){
   H12i_001= (-1.0 / (2 * kin.shiftexc_W_sq * r1 * r2)) * (
     sq(sqrt(kin.shiftexc_W_sq) - kin.M) * r1 * (2 *sqrt(kin.shiftexc_W_sq)* kin.shiftexc_lambda_Y * sq(kin.shiftexc_ph_t) * exc_SF_com.f14r + r1 * r2 * r3 * exc_SF_com.f11) +
     sq(sqrt(kin.shiftexc_W_sq) + kin.M) * r2 * (2 *sqrt(kin.shiftexc_W_sq)* kin.shiftexc_lambda_Y * sq(kin.shiftexc_ph_t) * exc_SF_com.f23r + r1 * r2 * r4 * exc_SF_com.f22) +
-    2 * (sq(kin.shiftexc_W_sq) - sq(kin.M)) * r5 * kin.shiftexc_lambda_Y * exc_SF_com.f12r);
+    2 * (kin.shiftexc_W_sq - sq(kin.M)) * r5 * kin.shiftexc_lambda_Y * exc_SF_com.f12r);
 
 }
 
